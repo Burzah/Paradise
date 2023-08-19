@@ -541,3 +541,43 @@
  */
 /obj/machinery/proc/flicker()
 	return FALSE
+
+//Called when loading a mob into a machine such as the sleeper
+/obj/machinery/proc/insert_mob(mob/user, mob/living/L)
+	if(L.abiotic() && do_after(user, 2 SECONDS, target = src))
+		L.drop_l_hand()
+		L.drop_r_hand()
+		to_chat(user, "<span class='boldnotice'>Subject has dropped the items they were holding!</span>")
+	L.forceMove(src)
+	update_icon(UPDATE_ICON_STATE)
+	SStgui.update_uis(src)
+	add_fingerprint(usr)
+
+//Called to check elgibility when trying to load a mob into a machine such as the sleeper
+/obj/machinery/proc/permitted_check(atom/movable/O, mob/user)
+	if(O.loc == user) //no you can't pull things out of your ass
+		return
+	if(user.incapacitated()) //are you cuffed, dying, lying, stunned or other
+		return
+	if(get_dist(user, src) > 1 || get_dist(user, O) > 1 || user.contents.Find(src)) // is the mob anchored, too far away from you, or are you too far away from the source
+		return
+	if(!ismob(O)) //humans only
+		return
+	if(isanimal(O) || issilicon(O)) //animals and robots dont fit
+		return
+	if(!ishuman(user) && !isrobot(user)) //No ghosts or mice putting people into the machine
+		return
+	if(!user.loc) // just in case someone manages to get a closet into the blue light dimension, as unlikely as that seems
+		return
+	if(!isturf(user.loc) || !isturf(O.loc)) // are you in a container/closet/pod/etc?
+		return
+	if(panel_open)
+		to_chat(user, "<span class='boldnotice'>Close the maintenance panel first.</span>")
+		return
+	var/mob/living/L = O
+	if(!istype(L) || L.buckled)
+		return
+	if(L.has_buckled_mobs()) //mob attached to us
+		to_chat(user, "<span class='warning'>[L] will not fit into [src] because [L.p_they()] [L.p_have()] a slime latched onto [L.p_their()] head.</span>")
+		return
+	return TRUE

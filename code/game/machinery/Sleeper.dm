@@ -341,21 +341,17 @@
 
 		visible_message("[user] starts putting [G.affecting.name] into the sleeper.")
 
-		if(do_after(user, 20, target = G.affecting))
-			if(occupant)
-				to_chat(user, "<span class='boldnotice'>The sleeper is already occupied!</span>")
-				return
-			if(!G || !G.affecting)
-				return
-			var/mob/M = G.affecting
-			M.forceMove(src)
-			occupant = M
-			update_icon(UPDATE_ICON_STATE)
-			to_chat(M, "<span class='boldnotice'>You feel cool air surround you. You go numb as your senses turn inward.</span>")
-			add_fingerprint(user)
-			qdel(G)
-			SStgui.update_uis(src)
+		if(occupant)
+			to_chat(user, "<span class='boldnotice'>The sleeper is already occupied!</span>")
 			return
+		if(!G || !G.affecting)
+			return
+		var/mob/M = G.affecting
+		insert_mob(user, M)
+		occupant = M
+		to_chat(M, "<span class='boldnotice'>You feel cool air surround you. You go numb as your senses turn inward.</span>")
+		qdel(G)
+		return
 
 	return ..()
 
@@ -499,54 +495,19 @@
 	return TRUE
 
 /obj/machinery/sleeper/proc/put_in(atom/movable/O, mob/user, mob/living/L) // need this proc to use INVOKE_ASYNC in other proc. You're not recommended to use that one
-	if(do_after(user, 20, target = L))
-		if(!permitted_check(O, user))
-			return
-		if(!L)
-			return
-		L.forceMove(src)
-		occupant = L
-		playsound(src, 'sound/machines/podclose.ogg', 5)
-		update_icon(UPDATE_ICON_STATE)
-		to_chat(L, "<span class='boldnotice'>You feel cool air surround you. You go numb as your senses turn inward.</span>")
-		add_fingerprint(user)
-		if(user.pulling == L)
-			user.stop_pulling()
-		SStgui.update_uis(src)
-
-/obj/machinery/sleeper/proc/permitted_check(atom/movable/O, mob/user)
-	if(O.loc == user) //no you can't pull things out of your ass
+	if(!permitted_check(O, user))
 		return
-	if(user.incapacitated()) //are you cuffed, dying, lying, stunned or other
-		return
-	if(get_dist(user, src) > 1 || get_dist(user, O) > 1 || user.contents.Find(src)) // is the mob anchored, too far away from you, or are you too far away from the source
-		return
-	if(!ismob(O)) //humans only
-		return
-	if(isanimal(O) || issilicon(O)) //animals and robots dont fit
-		return
-	if(!ishuman(user) && !isrobot(user)) //No ghosts or mice putting people into the sleeper
-		return
-	if(!user.loc) // just in case someone manages to get a closet into the blue light dimension, as unlikely as that seems
-		return
-	if(!isturf(user.loc) || !isturf(O.loc)) // are you in a container/closet/pod/etc?
-		return
-	if(panel_open)
-		to_chat(user, "<span class='boldnotice'>Close the maintenance panel first.</span>")
+	if(!L)
 		return
 	if(occupant)
-		to_chat(user, "<span class='boldnotice'>The sleeper is already occupied!</span>")
+		to_chat(user, "<span class='boldnotice'>There is someone already inside!</span>")
 		return
-	var/mob/living/L = O
-	if(!istype(L) || L.buckled)
-		return
-	if(L.abiotic())
-		to_chat(user, "<span class='boldnotice'>Subject may not hold anything in their hands.</span>")
-		return
-	if(L.has_buckled_mobs()) //mob attached to us
-		to_chat(user, "<span class='warning'>[L] will not fit into [src] because [L.p_they()] [L.p_have()] a slime latched onto [L.p_their()] head.</span>")
-		return
-	return TRUE
+	occupant = L
+	insert_mob(user, L)
+	playsound(src, 'sound/machines/podclose.ogg', 5)
+	to_chat(L, "<span class='boldnotice'>You feel cool air surround you. You go numb as your senses turn inward.</span>")
+	if(user.pulling == L)
+		user.stop_pulling()
 
 /obj/machinery/sleeper/AllowDrop()
 	return FALSE
@@ -569,21 +530,19 @@
 		to_chat(usr, "<span class='warning'>[usr] will not fit into [src] because [usr.p_they()] [usr.p_have()] a slime latched onto [usr.p_their()] head.</span>")
 		return
 	visible_message("[usr] starts climbing into the sleeper.")
-	if(do_after(usr, 20, target = usr))
-		if(occupant)
-			to_chat(usr, "<span class='boldnotice'>The sleeper is already occupied!</span>")
-			return
-		usr.stop_pulling()
-		usr.forceMove(src)
-		occupant = usr
-		playsound(src, 'sound/machines/podclose.ogg', 5)
-		update_icon(UPDATE_ICON_STATE)
-
-		for(var/obj/O in src)
-			qdel(O)
-		add_fingerprint(usr)
-		SStgui.update_uis(src)
+	if(occupant)
+		to_chat(usr, "<span class='boldnotice'>The sleeper is already occupied!</span>")
 		return
+	usr.stop_pulling()
+	usr.forceMove(src)
+	occupant = usr
+	playsound(src, 'sound/machines/podclose.ogg', 5)
+	update_icon(UPDATE_ICON_STATE)
+
+	for(var/obj/O in src)
+		qdel(O)
+	add_fingerprint(usr)
+	SStgui.update_uis(src)
 	return
 
 /obj/machinery/sleeper/syndie
