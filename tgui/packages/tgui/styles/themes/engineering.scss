@@ -1,0 +1,79 @@
+@use 'sass:color';
+@use 'sass:meta';
+
+@use '../colors.scss' with (
+  $primary: #000000,
+  $fg-map-keys: (),
+  $bg-map-keys: ()
+);
+@use '../base.scss' with (
+  $color-bg: #b4a907,
+  $color-bg-grad-spread: 0%,
+  $border-radius: 0px
+);
+
+
+.theme-engineering {
+  // Atomic classes
+  @include meta.load-css('../atomic/color.scss');
+
+  // Components
+  @include meta.load-css(
+    '../components/Button.scss',
+    $with: (
+      'color-default': #a7af99,
+      'color-disabled': #363636,
+      'color-selected': #a7af99,
+      'color-caution': #be6209,
+      'color-danger': #9a9d00
+    )
+  );
+  @include meta.load-css(
+    '../components/NumberInput.scss',
+    $with: ('border-color': #ffffff)
+  );
+  @include meta.load-css(
+    '../components/ProgressBar.scss',
+    $with: ('color-background': rgba(0, 0, 0, 0.5))
+  );
+  @include meta.load-css('../components/Section.scss');
+  @include meta.load-css('../components/LabeledList.scss');
+
+  // Layouts
+  @include meta.load-css('../layouts/Layout.scss');
+  @include meta.load-css('../layouts/Window.scss');
+  @include meta.load-css(
+    '../layouts/TitleBar.scss',
+    $with: (
+      'color-background': #d6c807
+    )
+  );
+
+  .Button {
+    border-color: #000000;
+    border-width: 2px;
+    border-style: solid;
+    color: #000000;
+    }
+
+  .LabeledList {
+    color: #000000;
+  }
+
+  .TitleBar{
+    color: yellow;
+    $color-stripes: #000;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 10px,
+      $color-stripes 10px,
+      $color-stripes 20px)
+  }
+
+  .Table{
+    color:#000;
+
+  }
+
+}
