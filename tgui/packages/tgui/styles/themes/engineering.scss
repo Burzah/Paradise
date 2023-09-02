@@ -7,7 +7,6 @@
   $bg-map-keys: ()
 );
 @use '../base.scss' with (
-  $color-bg: #b4a907,
   $color-bg-grad-spread: 0%,
   $border-radius: 0px
 );
@@ -21,9 +20,9 @@
   @include meta.load-css(
     '../components/Button.scss',
     $with: (
-      'color-default': #a7af99,
+      'color-default': #a7710e,
       'color-disabled': #363636,
-      'color-selected': #a7af99,
+      'color-selected': #767773,
       'color-caution': #be6209,
       'color-danger': #9a9d00
     )
@@ -45,15 +44,15 @@
   @include meta.load-css(
     '../layouts/TitleBar.scss',
     $with: (
-      'color-background': #d6c807
+      'color-background': #a7710e
     )
   );
 
   .Button {
-    border-color: #000000;
+    border-color: #858282;
     border-width: 2px;
     border-style: solid;
-    color: #000000;
+    color: #080808;
     }
 
   .LabeledList {
@@ -61,7 +60,7 @@
   }
 
   .TitleBar{
-    color: yellow;
+    color: #ffa600;
     $color-stripes: #000;
     background-image: repeating-linear-gradient(
       -45deg,
@@ -72,7 +71,7 @@
   }
 
   .Table{
-    color:#000;
+    color:#9e9e9d
 
   }
 
