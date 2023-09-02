@@ -467,11 +467,7 @@
 	go_out()
 	add_fingerprint(usr)
 
-/obj/machinery/sleeper/verb/remove_beaker()
-	set name = "Remove Beaker"
-	set category = "Object"
-	set src in oview(1)
-
+/obj/machinery/sleeper/proc/remove_beaker()
 	if(usr.incapacitated() || !Adjacent(usr))
 		return
 
@@ -482,6 +478,7 @@
 		SStgui.update_uis(src)
 	add_fingerprint(usr)
 	return
+
 
 /obj/machinery/sleeper/MouseDrop_T(atom/movable/O, mob/user)
 	if(!permitted_check(O, user))
@@ -511,39 +508,6 @@
 
 /obj/machinery/sleeper/AllowDrop()
 	return FALSE
-
-/obj/machinery/sleeper/verb/move_inside()
-	set name = "Enter Sleeper"
-	set category = "Object"
-	set src in oview(1)
-	if(usr.stat != 0 || !(ishuman(usr)))
-		return
-	if(occupant)
-		to_chat(usr, "<span class='boldnotice'>The sleeper is already occupied!</span>")
-		return
-	if(panel_open)
-		to_chat(usr, "<span class='boldnotice'>Close the maintenance panel first.</span>")
-		return
-	if(usr.incapacitated() || usr.buckled) //are you cuffed, dying, lying, stunned or other
-		return
-	if(usr.has_buckled_mobs()) //mob attached to us
-		to_chat(usr, "<span class='warning'>[usr] will not fit into [src] because [usr.p_they()] [usr.p_have()] a slime latched onto [usr.p_their()] head.</span>")
-		return
-	visible_message("[usr] starts climbing into the sleeper.")
-	if(occupant)
-		to_chat(usr, "<span class='boldnotice'>The sleeper is already occupied!</span>")
-		return
-	usr.stop_pulling()
-	usr.forceMove(src)
-	occupant = usr
-	playsound(src, 'sound/machines/podclose.ogg', 5)
-	update_icon(UPDATE_ICON_STATE)
-
-	for(var/obj/O in src)
-		qdel(O)
-	add_fingerprint(usr)
-	SStgui.update_uis(src)
-	return
 
 /obj/machinery/sleeper/syndie
 	icon_state = "sleeper_s-open"

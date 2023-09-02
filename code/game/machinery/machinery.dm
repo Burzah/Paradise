@@ -544,7 +544,7 @@
 
 //Called when loading a mob into a machine such as the sleeper
 /obj/machinery/proc/insert_mob(mob/user, mob/living/L)
-	if(L.abiotic() && do_after(user, 2 SECONDS, target = src))
+	if(L.abiotic() && do_after(user, 3 SECONDS, target = src))
 		L.drop_l_hand()
 		L.drop_r_hand()
 		to_chat(user, "<span class='boldnotice'>Subject has dropped the items they were holding!</span>")
