@@ -83,66 +83,83 @@ GLOBAL_VAR_INIT(nologevent, 0)
 	if(M.client)
 		body += " played by <b>[M.client]</b> "
 		if(check_rights(R_PERMISSIONS, 0))
-			body += "\[<A href='?_src_=holder;editrights=rank;ckey=[M.ckey]'>[M.client.holder ? M.client.holder.rank : "Player"]</A>\] "
+			body += "\[<a href='?_src_=holder;editrights=rank;ckey=[M.ckey]'>[M.client.holder ? M.client.holder.rank : "Player"]</a>\] "
 		else
 			body += "\[[M.client.holder ? M.client.holder.rank : "Player"]\] "
-		body += "\[<A href='?_src_=holder;getplaytimewindow=[M.UID()]'>" + M.client.get_exp_type(EXP_TYPE_CREW) + " as [EXP_TYPE_CREW]</a>\]"
+		body += "\[<a href='?_src_=holder;getplaytimewindow=[M.UID()]'>" + M.client.get_exp_type(EXP_TYPE_CREW) + " as [EXP_TYPE_CREW]</a>\]"
 		body += "<br>BYOND account registration date: [M.client.byondacc_date || "ERROR"] [M.client.byondacc_age <= GLOB.configuration.general.byond_account_age_threshold ? "<b>" : ""]([M.client.byondacc_age] days old)[M.client.byondacc_age <= GLOB.configuration.general.byond_account_age_threshold ? "</b>" : ""]"
 		body += "<br>BYOND client version: [M.client.byond_version].[M.client.byond_build]"
-		body += "<br>Global Ban DB Lookup: [GLOB.configuration.url.centcom_ban_db_url ? "<a href='?_src_=holder;open_ccbdb=[M.client.ckey]'>Lookup</a>" : "<i>Disabled</i>"]"
+		body += "<br>Global Ban DB Lookup: [GLOB.configuration.url.centcom_ban_db_url ? "<a href='?_src_=holder;open_ccbdb=[M.client.ckey]'>Lookup</a>" : "<i>Disabled</i>"]<br>"
 
-		body += "<br>"
+	if(M.client.related_accounts_cid.len)
+		body += "<b>Related accounts by CID:</b> [jointext(M.client.related_accounts_cid, " - ")]<br>"
+	if(M.client.related_accounts_ip.len)
+		body += "<b>Related accounts by IP:</b> [jointext(M.client.related_accounts_ip, " - ")]<br>"
 
-	if(isnewplayer(M))
-		body += " <B>Hasn't Entered Game</B> "
-	else
-		body += " \[<A href='?_src_=holder;revive=[M.UID()]'>Heal</A>\] "
-
-
-	body += "<br><br>\[ "
-	body += "<a href='?_src_=holder;open_logging_view=[M.UID()];'>LOGS</a> - "
-	body += "<a href='?_src_=vars;Vars=[M.UID()]'>VV</a> - "
-	body += "[ADMIN_TP(M,"TP")] - "
 	if(M.client)
-		body += "<a href='?src=[usr.UID()];priv_msg=[M.client.ckey]'>PM</a> - "
-		body += "[ADMIN_SM(M,"SM")] - "
-	if(ishuman(M) && M.mind)
-		body += "<a href='?_src_=holder;HeadsetMessage=[M.UID()]'>HM</a> - "
-	body += "[admin_jump_link(M)] - "
-	body += "<a href='?_src_=holder;adminalert=[M.UID()]'>SEND ALERT</a>\]</b><br>"
-	body += "<b>Mob type:</b> [M.type]<br>"
-	if(M.client)
-		if(M.client.related_accounts_cid.len)
-			body += "<b>Related accounts by CID:</b> [jointext(M.client.related_accounts_cid, " - ")]<br>"
-		if(M.client.related_accounts_ip.len)
-			body += "<b>Related accounts by IP:</b> [jointext(M.client.related_accounts_ip, " - ")]<br><br>"
+		if(isobserver(M))
+			body += "<br><b>Player is Dead</b><a href='?_src_=holder;incarn_ghost=[M.UID()]'> (Re-incarnate)</a>"
+		else if(isnewplayer(M))
+			body += "<br><b>Hasn't Entered Game</b> "
+		else
+			body += "<br><b>Player is Alive</b>"
+
+	body += {"
+		<br>
+		<br>
+		<b>Actions:</b>
+		<br>
+	 	<a href='?_src_=holder;open_logging_view=[M.UID()];'>Logs</a>
+	 	- <a href='?_src_=vars;Vars=[M.UID()]'>VV</a>
+	 	- [ADMIN_TP(M,"Traitor Panel")]
+	"}
 
 	if(M.ckey)
-		body += "<A href='?_src_=holder;boot2=[M.UID()]'>Kick</A> | "
-		body += "<A href='?_src_=holder;newban=[M.UID()];dbbanaddckey=[M.ckey]'>Ban</A> | "
-		body += "<A href='?_src_=holder;jobban2=[M.UID()];dbbanaddckey=[M.ckey]'>Jobban</A> | "
-		body += "<A href='?_src_=holder;shownoteckey=[M.ckey]'>Notes</A> | "
+		body += " - <a href='?_src_=holder;boot2=[M.UID()]'>Kick</a>"
+		body += " - <a href='?_src_=holder;newban=[M.UID()];dbbanaddckey=[M.ckey]'>Ban</a>"
+		body += " - <a href='?_src_=holder;jobban2=[M.UID()];dbbanaddckey=[M.ckey]'>Jobban</a>"
+		body += " - <a href='?_src_=holder;shownoteckey=[M.ckey]'>Notes</a>"
 		if(GLOB.configuration.url.forum_playerinfo_url)
-			body += "<A href='?_src_=holder;webtools=[M.ckey]'>WebInfo</A> | "
+			body += " - <a href='?_src_=holder;webtools=[M.ckey]'>WebInfo</a>"
+
 	if(M.client)
 		if(M.client.watchlisted)
-			body += "<A href='?_src_=holder;watchremove=[M.ckey]'>Remove from Watchlist</A> | "
-			body += "<A href='?_src_=holder;watchedit=[M.ckey]'>Edit Watchlist Reason</A> "
+			body += " - <a href='?_src_=holder;watchremove=[M.ckey]'>Remove from Watchlist</a>"
+			body += " - <a href='?_src_=holder;watchedit=[M.ckey]'>Edit Watchlist Reason</a>"
 		else
-			body += "<A href='?_src_=holder;watchadd=[M.ckey]'>Add to Watchlist</A> "
+			body += " - <a href='?_src_=holder;watchadd=[M.ckey]'>Add to Watchlist</a> "
 
-		body += "| <A href='?_src_=holder;sendtoprison=[M.UID()]'>Prison</A> | "
-		body += "\ <A href='?_src_=holder;sendbacktolobby=[M.UID()]'>Send back to Lobby</A> | "
-		body += "\ <A href='?_src_=holder;eraseflavortext=[M.UID()]'>Erase Flavor Text</A> | "
-		body += "\ <A href='?_src_=holder;userandomname=[M.UID()]'>Use Random Name</A> | "
-		body += {"<br><b>Mute: </b>
-			\[<A href='?_src_=holder;mute=[M.UID()];mute_type=[MUTE_IC]'><font color='[check_mute(M.client.ckey, MUTE_IC) ? "red" : "#6685f5"]'>IC</font></a> |
-			<A href='?_src_=holder;mute=[M.UID()];mute_type=[MUTE_OOC]'><font color='[check_mute(M.client.ckey, MUTE_OOC) ? "red" : "#6685f5"]'>OOC</font></a> |
-			<A href='?_src_=holder;mute=[M.UID()];mute_type=[MUTE_PRAY]'><font color='[check_mute(M.client.ckey, MUTE_PRAY) ? "red" : "#6685f5"]'>PRAY</font></a> |
-			<A href='?_src_=holder;mute=[M.UID()];mute_type=[MUTE_ADMINHELP]'><font color='[check_mute(M.client.ckey, MUTE_ADMINHELP) ? "red" : "#6685f5"]'>ADMINHELP</font></a> |
-			<A href='?_src_=holder;mute=[M.UID()];mute_type=[MUTE_DEADCHAT]'><font color='[check_mute(M.client.ckey, MUTE_DEADCHAT) ?" red" : "#6685f5"]'>DEADCHAT</font></a> |
-			<A href='?_src_=holder;mute=[M.UID()];mute_type=[MUTE_EMOTE]'><font color='[check_mute(M.client.ckey, MUTE_EMOTE) ?" red" : "#6685f5"]'>EMOTE</font></a>]
-			(<A href='?_src_=holder;mute=[M.UID()];mute_type=[MUTE_ALL]'><font color='[check_mute(M.client.ckey, MUTE_ALL) ? "red" : "#6685f5"]'>toggle all</font></a>)
+		body += {"
+			 - <a href='?_src_=holder;eraseflavortext=[M.UID()]'>Erase Flavor Text</a>
+			 - <a href='?_src_=holder;userandomname=[M.UID()]'>Use Random Name</a>
+			 - <a href='?_src_=holder;Bless=[M.UID()]'>Bless</a>
+			 - <a href='?_src_=holder;Smite=[M.UID()]'>Smite</a>
+			<br>
+			<br>
+			<b>Message:</b>
+			<br>
+			<a href='?src=[usr.UID()];priv_msg=[M.client.ckey]'>Private Message</a>
+			 - <a href='?_src_=holder;narrateto=[M.UID()]'>Narrate to</a>
+			 - [ADMIN_SM(M,"Subtle Message")]
+		"}
+
+		if(ishuman(M) && M.mind)
+			body += " - <a href='?_src_=holder;HeadsetMessage=[M.UID()]'>Headset Message</a>"
+		body += " - <a href='?_src_=holder;adminalert=[M.UID()]'>Send Alert</a></b>"
+
+	if(M.client)
+		body += {"
+			<br>
+			<br>
+			<b>Mute:</b>
+			<br>
+			<a href='?_src_=holder;mute=[M.UID()];mute_type=[MUTE_IC]'><font color='[check_mute(M.client.ckey, MUTE_IC) ? "red" : "#6685f5"]'>IC</font></a>
+			 - <a href='?_src_=holder;mute=[M.UID()];mute_type=[MUTE_OOC]'><font color='[check_mute(M.client.ckey, MUTE_OOC) ? "red" : "#6685f5"]'>OOC</font></a>
+			 - <a href='?_src_=holder;mute=[M.UID()];mute_type=[MUTE_PRAY]'><font color='[check_mute(M.client.ckey, MUTE_PRAY) ? "red" : "#6685f5"]'>Pray</font></a>
+			 - <a href='?_src_=holder;mute=[M.UID()];mute_type=[MUTE_ADMINHELP]'><font color='[check_mute(M.client.ckey, MUTE_ADMINHELP) ? "red" : "#6685f5"]'>Admin Help</font></a>
+			 - <a href='?_src_=holder;mute=[M.UID()];mute_type=[MUTE_DEADCHAT]'><font color='[check_mute(M.client.ckey, MUTE_DEADCHAT) ?" red" : "#6685f5"]'>Dead Chat</font></a>
+			 - <a href='?_src_=holder;mute=[M.UID()];mute_type=[MUTE_EMOTE]'><font color='[check_mute(M.client.ckey, MUTE_EMOTE) ?" red" : "#6685f5"]'>Emote</font></a>
+			(<a href='?_src_=holder;mute=[M.UID()];mute_type=[MUTE_ALL]'><font color='[check_mute(M.client.ckey, MUTE_ALL) ? "red" : "#6685f5"]'>Toggle All</font></a>)
 		"}
 
 	var/jumptoeye = ""
@@ -150,134 +167,70 @@ GLOBAL_VAR_INIT(nologevent, 0)
 		var/mob/living/silicon/ai/A = M
 		if(A.client && A.eyeobj) // No point following clientless AI eyes
 			jumptoeye = " <b>(<A href='?_src_=holder;jumpto=[A.eyeobj.UID()]'>Eye</A>)</b>"
-	body += {"<br><br>
-		<A href='?_src_=holder;jumpto=[M.UID()]'><b>Jump to</b></A>[jumptoeye] |
-		<A href='?_src_=holder;getmob=[M.UID()]'>Get</A> |
-		<A href='?_src_=holder;sendmob=[M.UID()]'>Send To</A>
-		<br><br>
-		[check_rights(R_ADMIN,0) ? "[ADMIN_TP(M,"Traitor panel")] | " : "" ]
-		<A href='?_src_=holder;narrateto=[M.UID()]'>Narrate to</A> |
-		[ADMIN_SM(M,"Subtle message")]
+
+	body += {"
+		<br>
+		<br>
+		<b>Location:</b>
+		<br>
+		<a href='?_src_=holder;jumpto=[M.UID()]'><b>Jump to</b></a>[jumptoeye]
+		 - <a href='?_src_=holder;getmob=[M.UID()]'>Get</a>
+		 - <a href='?_src_=holder;sendmob=[M.UID()]'>Send To</a>
+		 - <a href='?_src_=holder;sendbacktolobby=[M.UID()]'>Send to Lobby</a>
+		 - <a href='?_src_=holder;sendtoprison=[M.UID()]'>Send to Prison</a>
+		 - <a href='?_src_=holder;aroomwarp=[M.UID()]'>Admin Room</a>
+		<br>
+		<br>
+		<b>Other actions:</b>
+		<br>
+		<a href='?_src_=holder;forcespeech=[M.UID()]'>Forcesay</a>
+		 - <a href='?_src_=holder;contractor_stop=[M.UID()]'>Stop Syndicate Jail Timer</a>
+		 - <a href='?_src_=holder;contractor_start=[M.UID()]'>Start Syndicate Jail Timer</a>
+		 - <a href='?_src_=holder;contractor_release=[M.UID()]'>Release now from Syndicate Jail</a>
 	"}
 
-	if(check_rights(R_EVENT, 0))
-		body += {" | <A href='?_src_=holder;Bless=[M.UID()]'>Bless</A> | <A href='?_src_=holder;Smite=[M.UID()]'>Smite</A>"}
+	if(isAI(M))
+		body += " - <b>Is an AI</b> "
+	else if(ishuman(M))
+		body += " - <a href='?_src_=holder;makeai=[M.UID()]'>Make AI</a>"
+
+	if(issmall(M))
+		body += " - <b>Is a Monkey</b>"
+	else
+		body += " - <a href='?_src_=holder;monkeyone=[M.UID()]'>Make Monkey</a>"
 
 	if(isLivingSSD(M))
 		if(istype(M.loc, /obj/machinery/cryopod))
-			body += {" | <A href='?_src_=holder;cryossd=[M.UID()]'>De-Spawn</A> "}
+			body += " - <a href='?_src_=holder;cryossd=[M.UID()]'>De-Spawn</a> "
 		else
-			body += {" | <A href='?_src_=holder;cryossd=[M.UID()]'>Cryo</A> "}
+			body += " - <a href='?_src_=holder;cryossd=[M.UID()]'>Cryo</a> "
 
 	if(M.client)
-		if(!isnewplayer(M))
+		if(M.dna && iscarbon(M))
 			body += "<br><br>"
-			body += "<b>Transformation:</b>"
-			body += "<br>"
-
-			//Monkey
-			if(issmall(M))
-				body += "<B>Monkeyized</B> | "
-			else
-				body += "<A href='?_src_=holder;monkeyone=[M.UID()]'>Monkeyize</A> | "
-
-			//Corgi
-			if(iscorgi(M))
-				body += "<B>Corgized</B> | "
-			else
-				body += "<A href='?_src_=holder;corgione=[M.UID()]'>Corgize</A> | "
-
-			//AI / Cyborg
-			if(isAI(M))
-				body += "<B>Is an AI</B> "
-			else if(ishuman(M))
-				body += {"<A href='?_src_=holder;makeai=[M.UID()]'>Make AI</A> |
-					<A href='?_src_=holder;makerobot=[M.UID()]'>Make Robot</A> |
-					<A href='?_src_=holder;makealien=[M.UID()]'>Make Alien</A> |
-					<A href='?_src_=holder;makeslime=[M.UID()]'>Make Slime</A> |
-					<A href='?_src_=holder;makesuper=[M.UID()]'>Make Superhero</A>
-				"}
-
-			//Simple Animals
-			if(isanimal(M))
-				body += "<A href='?_src_=holder;makeanimal=[M.UID()]'>Re-Animalize</A> | "
-			else
-				body += "<A href='?_src_=holder;makeanimal=[M.UID()]'>Animalize</A> | "
-
-			if(isobserver(M))
-				body += "<A href='?_src_=holder;incarn_ghost=[M.UID()]'>Re-incarnate</a> | "
-
-			if(ispAI(M))
-				body += "<B>Is a pAI</B> "
-			else
-				body += "<A href='?_src_=holder;makePAI=[M.UID()]'>Make pAI</A> | "
-
-			// DNA2 - Admin Hax
-			if(M.dna && iscarbon(M))
-				body += "<br><br>"
-				body += "<b>DNA Blocks:</b><br><table border='0'><tr><th>&nbsp;</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>"
-				var/bname
-				for(var/block in 1 to DNA_SE_LENGTH)
-					if(((block-1)%5)==0)
-						body += "</tr><tr><th>[block-1]</th>"
-					bname = GLOB.assigned_blocks[block]
-					body += "<td>"
-					if(bname)
-						var/bstate=M.dna.GetSEState(block)
-						var/bcolor="[(bstate)?"#006600":"#ff0000"]"
-						body += "<A href='?_src_=holder;togmutate=[M.UID()];block=[block]' style='color:[bcolor];'>[bname]</A><sub>[block]</sub>"
-					else
-						body += "[block]"
-					body+="</td>"
-				body += "</tr></table>"
-
-			body += {"<br><br>
-				<b>Rudimentary transformation:</b><font size=2><br>These transformations only create a new mob type and copy stuff over. They do not take into account MMIs and similar mob-specific things. The buttons in 'Transformations' are preferred, when possible.</font><br>
-				<A href='?_src_=holder;simplemake=observer;mob=[M.UID()]'>Observer</A> |
-				\[ Alien: <A href='?_src_=holder;simplemake=drone;mob=[M.UID()]'>Drone</A>,
-				<A href='?_src_=holder;simplemake=hunter;mob=[M.UID()]'>Hunter</A>,
-				<A href='?_src_=holder;simplemake=queen;mob=[M.UID()]'>Queen</A>,
-				<A href='?_src_=holder;simplemake=sentinel;mob=[M.UID()]'>Sentinel</A>,
-				<A href='?_src_=holder;simplemake=larva;mob=[M.UID()]'>Larva</A> \]
-				<A href='?_src_=holder;simplemake=human;mob=[M.UID()]'>Human</A>
-				\[ slime: <A href='?_src_=holder;simplemake=slime;mob=[M.UID()]'>Baby</A>,
-				<A href='?_src_=holder;simplemake=adultslime;mob=[M.UID()]'>Adult</A> \]
-				<A href='?_src_=holder;simplemake=monkey;mob=[M.UID()]'>Monkey</A> |
-				<A href='?_src_=holder;simplemake=robot;mob=[M.UID()]'>Cyborg</A> |
-				<A href='?_src_=holder;simplemake=cat;mob=[M.UID()]'>Cat</A> |
-				<A href='?_src_=holder;simplemake=runtime;mob=[M.UID()]'>Runtime</A> |
-				<A href='?_src_=holder;simplemake=corgi;mob=[M.UID()]'>Corgi</A> |
-				<A href='?_src_=holder;simplemake=ian;mob=[M.UID()]'>Ian</A> |
-				<A href='?_src_=holder;simplemake=crab;mob=[M.UID()]'>Crab</A> |
-				<A href='?_src_=holder;simplemake=coffee;mob=[M.UID()]'>Coffee</A> |
-				\[ Construct: <A href='?_src_=holder;simplemake=constructarmoured;mob=[M.UID()]'>Armoured</A> ,
-				<A href='?_src_=holder;simplemake=constructbuilder;mob=[M.UID()]'>Builder</A> ,
-				<A href='?_src_=holder;simplemake=constructwraith;mob=[M.UID()]'>Wraith</A> \]
-				<A href='?_src_=holder;simplemake=shade;mob=[M.UID()]'>Shade</A>
-			"}
-
-	if(M.client)
-		body += {"<br><br>
-			<b>Other actions:</b>
+			body += "<b>DNA Blocks:</b><br><table border='1'>"
+			var/bname
+			for(var/block in 1 to DNA_SE_LENGTH)
+				if(((block - 1) % 5) == 0)
+					body += "<tr>"
+				bname = GLOB.assigned_blocks[block]
+				body += "<td>"
+				if(bname)
+					var/bstate=M.dna.GetSEState(block)
+					var/bcolor="[(bstate)?"#006600":"#ff0000"]"
+					body += "<center><font size=2><a href='?_src_=holder;togmutate=[M.UID()];block=[block]' style='color:[bcolor];'>[bname]</a>[block]</font></center>"
+				else
+					body += "<center><font size=2>[block]</font></center>"
+				body+="</td>"
+			body += "</tr></table>"
+		body += {"
 			<br>
-			<A href='?_src_=holder;forcespeech=[M.UID()]'>Forcesay</A> |
-			<A href='?_src_=holder;aroomwarp=[M.UID()]'>Admin Room</A> |
-			<A href='?_src_=holder;tdome1=[M.UID()]'>Thunderdome 1</A> |
-			<A href='?_src_=holder;tdome2=[M.UID()]'>Thunderdome 2</A> |
-			<A href='?_src_=holder;tdomeadmin=[M.UID()]'>Thunderdome Admin</A> |
-			<A href='?_src_=holder;tdomeobserve=[M.UID()]'>Thunderdome Observer</A> |
-			<A href='?_src_=holder;contractor_stop=[M.UID()]'>Stop Syndicate Jail Timer</A> |
-			<A href='?_src_=holder;contractor_start=[M.UID()]'>Start Syndicate Jail Timer</A> |
-			<A href='?_src_=holder;contractor_release=[M.UID()]'>Release now from Syndicate Jail</A> |
+			</body>
+			</html>
 		"}
-
-	body += {"<br>
-		</body></html>
-	"}
 
 	usr << browse(body, "window=adminplayeropts;size=550x615")
 	SSblackbox.record_feedback("tally", "admin_verb", 1, "Show Player Panel") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
-
 
 /datum/player_info/var/author // admin who authored the information
 /datum/player_info/var/rank //rank of admin who made the notes
