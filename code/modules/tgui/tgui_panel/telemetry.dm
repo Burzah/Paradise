@@ -60,21 +60,64 @@
 		message_admins("[key_name(client)] was kicked for sending a huge telemetry payload")
 		qdel(client)
 		return
+
+	var/ckey = client?.ckey
+	if(!ckey)
+		return
+
 	var/list/found
+
+	var/list/insert_queries = list()
+
 	for(var/i in 1 to len)
 		if(QDELETED(client))
 			// He got cleaned up before we were done
 			return
 		var/list/row = telemetry_connections[i]
+
 		// Check for a malformed history object
 		if(!row || row.len < 3 || (!row["ckey"] || !row["address"] || !row["computer_id"]))
 			return
+
+		if (!isnull(GLOB.round_id))
+			insert_queries += SSdbcore.NewQuery({"
+				INSERT INTO [format_table_name("telemetry_connections")] (
+					ckey,
+					telemetry_ckey,
+					address,
+					computer_id,
+					first_round_id,
+					latest_round_id
+				) VALUES(
+					:ckey,
+					:telemetry_ckey,
+					INET_ATON(:address),
+					:computer_id,
+					:round_id,
+					:round_id
+				) ON DUPLICATE KEY UPDATE latest_round_id = :round_id
+			"}, list(
+				"ckey" = ckey,
+				"telemetry_ckey" = row["ckey"],
+				"address" = row["address"],
+				"computer_id" = row["computer_id"],
+				"round_id" = GLOB.round_id,
+			))
+
 		if(world.IsBanned(row["ckey"], row["address"], row["computer_id"]))
 			found = row
 			break
 		CHECK_TICK
+
 	// This fucker has a history of playing on a banned account.
 	if(found)
 		var/msg = "[key_name(client)] has a banned account in connection history! (Matched: [found["ckey"]], [found["address"]], [found["computer_id"]])"
 		message_admins(msg)
 		log_admin(msg)
+
+
+	// Only log them all at the end, since it's not as important as reporting an evader
+	for (var/datum/db_query/insert_query as anything in insert_queries)
+		insert_query.Execute()
+
+	QDEL_LIST(insert_queries)
