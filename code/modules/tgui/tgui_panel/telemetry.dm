@@ -80,33 +80,17 @@
 			return
 
 		if (!isnull(GLOB.round_id))
-			insert_queries += SSdbcore.NewQuery({"
-				INSERT INTO [format_table_name("telemetry_connections")] (
-					ckey,
-					telemetry_ckey,
-					address,
-					computer_id,
-					first_round_id,
-					latest_round_id
-				) VALUES(
-					:ckey,
-					:telemetry_ckey,
-					INET_ATON(:address),
-					:computer_id,
-					:round_id,
-					:round_id
-				) ON DUPLICATE KEY UPDATE latest_round_id = :round_id
-			"}, list(
-				"ckey" = ckey,
+			query_data += list(list(
 				"telemetry_ckey" = row["ckey"],
 				"address" = row["address"],
 				"computer_id" = row["computer_id"],
-				"round_id" = GLOB.round_id,
 			))
+
 
 		if(world.IsBanned(row["ckey"], row["address"], row["computer_id"]))
 			found = row
 			break
+
 		CHECK_TICK
 
 	// This fucker has a history of playing on a banned account.
@@ -114,6 +98,34 @@
 		var/msg = "[key_name(client)] has a banned account in connection history! (Matched: [found["ckey"]], [found["address"]], [found["computer_id"]])"
 		message_admins(msg)
 		log_admin(msg)
+
+	// Only log them all at the end, since it's not as important as reporting an evader
+	for (var/list/one_query as anything in query_data)
+		var/datum/db_query/query = SSdbcore.NewQuery({"
+			INSERT INTO [format_table_name("telemetry_connections")] (
+				ckey,
+				telemetry_ckey,
+				address,
+				computer_id,
+				first_round_id,
+				latest_round_id
+			) VALUES(
+				:ckey,
+				:telemetry_ckey,
+				INET_ATON(:address),
+				:computer_id,
+				:round_id,
+				:round_id
+			) ON DUPLICATE KEY UPDATE latest_round_id = :round_id
+		"}, list(
+			"ckey" = ckey,
+			"telemetry_ckey" = one_query["telemetry_ckey"],
+			"address" = one_query["address"],
+			"computer_id" = one_query["computer_id"],
+			"round_id" = GLOB.round_id,
+		))
+		query.Execute()
+		qdel(query)
 
 #undef TGUI_TELEMETRY_MAX_CONNECTIONS
 #undef TGUI_TELEMETRY_RESPONSE_WINDOW
