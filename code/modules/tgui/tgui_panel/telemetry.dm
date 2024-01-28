@@ -115,9 +115,5 @@
 		message_admins(msg)
 		log_admin(msg)
 
-
-	// Only log them all at the end, since it's not as important as reporting an evader
-	for (var/datum/db_query/insert_query as anything in insert_queries)
-		insert_query.Execute()
-
-	QDEL_LIST(insert_queries)
+#undef TGUI_TELEMETRY_MAX_CONNECTIONS
+#undef TGUI_TELEMETRY_RESPONSE_WINDOW
