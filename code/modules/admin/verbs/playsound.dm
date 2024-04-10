@@ -23,11 +23,11 @@ GLOBAL_LIST_EMPTY(sounds_cache)
 
 	GLOB.sounds_cache += S
 
-	if(tgui_alert(usr, "Are you sure you want to play [S]?\nYou can now play this sound using \"Play Server Sound\".", "Confirmation Request", list("Okay", "Cancel")) != "Okay")
+	if(tgui_alert(usr, "Are you sure you want to play [S]? You can now play this sound using \"Play Server Sound\".", "Confirmation Request", list("Okay", "Cancel")) != "Okay")
 		return
 
 	if(holder.fakekey)
-		if(tgui_alert(usr, "Playing this sound will expose your real ckey despite being in stealth mode. Continue?", "Double check", list("Okay", "Cancel")) != "Okay")
+		if(tgui_alert(usr, "Playing this sound will expose your real ckey despite being in stealth mode. Continue?", "Double Check", list("Okay", "Cancel")) != "Okay")
 			return
 
 	log_admin("[key_name(src)] played sound [S]")
