@@ -23,13 +23,12 @@ GLOBAL_LIST_EMPTY(sounds_cache)
 
 	GLOB.sounds_cache += S
 
-	if(alert("Are you sure?\nSong: [S]\nNow you can also play this sound using \"Play Server Sound\".", "Confirmation request" ,"Play", "Cancel") == "Cancel")
+	if(tgui_alert(usr, "Are you sure you want to play [S]?\nYou can now play this sound using \"Play Server Sound\".", "Confirmation Request", list("Okay", "Cancel")) != "Okay")
 		return
 
 	if(holder.fakekey)
-		if(alert("Playing this sound will expose your real ckey despite being in stealth mode. You sure?", "Double check" ,"Play", "Cancel") == "Cancel")
+		if(tgui_alert(usr, "Playing this sound will expose your real ckey despite being in stealth mode. Continue?", "Double check", list("Okay", "Cancel")) != "Okay")
 			return
-
 
 	log_admin("[key_name(src)] played sound [S]")
 	message_admins("[key_name_admin(src)] played sound [S]", 1)
@@ -56,7 +55,7 @@ GLOBAL_LIST_EMPTY(sounds_cache)
 
 	log_admin("[key_name(src)] played a local sound [S]")
 	message_admins("[key_name_admin(src)] played a local sound [S]", 1)
-	playsound(get_turf(src.mob), S, 50, 0, 0)
+	playsound(get_turf(src.mob), S, 50, FALSE, 0)
 	SSblackbox.record_feedback("tally", "admin_verb", 1, "Play Local Sound") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 
 /client/proc/play_server_sound()
@@ -67,49 +66,53 @@ GLOBAL_LIST_EMPTY(sounds_cache)
 	var/list/sounds = file2list("sound/serversound_list.txt")
 	sounds += GLOB.sounds_cache
 
-	var/melody = input("Select a sound from the server to play", "Server sound list") as null|anything in sounds
-	if(!melody)	return
+	// Selects the sound that will be played
+	var/melody = tgui_input_list(usr, "Select a sound from the server to play.", "Server Sound List", sounds)
+	if(!melody)
+		return
 
 	play_sound(melody)
 	SSblackbox.record_feedback("tally", "admin_verb", 1, "Play Server Sound") //If you are copy-pasting this, ensure the 2nd paramter is unique to the new proc!
 
-/client/proc/play_intercomm_sound()
+/client/proc/play_intercom_sound()
 	set category = "Event"
-	set name = "Play Sound via Intercomms"
-	set desc = "Plays a sound at every intercomm on the station z level. Works best with small sounds."
-	if(!check_rights(R_SOUNDS))	return
+	set name = "Play Sound via Intercoms"
+	set desc = "Plays a sound at every intercom on the station z level. Works best with small sounds."
 
-	var/A = alert("This will play a sound at every intercomm, are you sure you want to continue? This works best with short sounds, beware.","Warning","Yep","Nope")
-	if(A != "Yep")	return
+	if(!check_rights(R_SOUNDS))
+		return
+
+	// Prompts the user with a warning about playing sounds over intercom
+	var/warning = tgui_alert(usr, "WARNING! Sound will play at every intercom! Would you like to continue?", "Warning", list("Okay", "Cancel"))
+	if(warning != "Okay")
+		return
 
 	var/list/sounds = file2list("sound/serversound_list.txt")
 	sounds += GLOB.sounds_cache
 
-	var/melody = input("Select a sound from the server to play", "Server sound list") as null|anything in sounds
-	if(!melody)	return
+	// Selects the sound that will be played
+	var/melody = tgui_input_list(usr, "Select a sound from the server to play.", "Server Sound List", sounds)
+	if(!melody)
+		return
 
-	var/cvol = 35
-	var/inputvol = input("How loud would you like this to be? (1-70)", "Volume", "35") as num | null
-	if(!inputvol)	return
-	if(inputvol && inputvol >= 1 && inputvol <= 70)
-		cvol = inputvol
+	// Allows for override to utilize intercoms on all z-levels
+	var/zlevel_override = tgui_alert(usr, "Do you want to play through intercoms on ALL Z-levels, or just the station?", "Z-level Override", list("Yes", "No"))
+	var/ignore_z = FALSE
+	if(zlevel_override == "Yes")
+		ignore_z = TRUE
 
-	//Allows for override to utilize intercomms on all z-levels
-	var/B = alert("Do you want to play through intercomms on ALL Z-levels, or just the station?", "Override", "All", "Station")
-	var/ignore_z = 0
-	if(B == "All")
-		ignore_z = 1
+	// Allows for override to utilize incomplete and unpowered intercoms
+	var/power_override = tgui_alert(usr, "Do you want to play through unpowered and incomplete intercoms?", "Power Override", list("Yes", "No"))
+	var/ignore_power = FALSE
+	if(power_override == "Yes")
+		ignore_power = TRUE
 
-	//Allows for override to utilize incomplete and unpowered intercomms
-	var/C = alert("Do you want to play through unpowered / incomplete intercomms, so the crew can't silence it?", "Override", "Yep", "Nope")
-	var/ignore_power = 0
-	if(C == "Yep")
-		ignore_power = 1
-
+	// Loops through the intercoms based on our choices
 	for(var/O in GLOB.global_intercoms)
 		var/obj/item/radio/intercom/I = O
 		if(!is_station_level(I.z) && !ignore_z)
 			continue
 		if(!I.on && !ignore_power)
 			continue
-		playsound(I, melody, cvol)
+		play_sound(melody)
+		return

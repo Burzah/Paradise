@@ -235,7 +235,7 @@ GLOBAL_LIST_EMPTY(deadsay_radio_systems)
 		return FALSE
 
 	if(isrobot(user))
-		return FALSE // cyborgs and drones are not allowed to remotely re-tune intercomms, etc
+		return FALSE // cyborgs and drones are not allowed to remotely re-tune intercoms, etc
 
 	return user.has_internal_radio_channel_access(user, internal_channels[freq])
 

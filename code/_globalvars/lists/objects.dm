@@ -37,7 +37,7 @@ GLOBAL_LIST_EMPTY(tracked_implants)			//list of all current implants that are tr
 GLOBAL_LIST_EMPTY(pinpointer_list)			//list of all pinpointers. Used to change stuff they are pointing to all at once.
 GLOBAL_LIST_EMPTY(nuclear_uplink_list)			//list of all existing nuke ops uplinks
 GLOBAL_LIST_EMPTY(abductor_equipment)			//list of all abductor equipment
-GLOBAL_LIST_EMPTY(global_intercoms)			//list of all intercomms, across all z-levels
+GLOBAL_LIST_EMPTY(global_intercoms)			//list of all intercoms, across all z-levels
 GLOBAL_LIST_EMPTY(global_radios)				//list of all radios, across all z-levels
 
 GLOBAL_LIST_EMPTY(meteor_list)				//list of all meteors
