@@ -123,6 +123,16 @@ GLOBAL_LIST_EMPTY(sounds_cache)
 			continue
 		playsound(I, sound_to_play, input_volume)
 
+	for(var/mob/M in GLOB.player_list)
+		if(M.client.prefs.sound & SOUND_MIDI)
+			if(ckey in M.client.prefs.admin_sound_ckey_ignore)
+				continue // This player has this admin muted
+			if(isnewplayer(M) && (M.client.prefs.sound & SOUND_LOBBY))
+				M.stop_sound_channel(CHANNEL_LOBBYMUSIC)
+
+		var/this_uid = M.client.UID()
+		to_chat(M, "<span class='boldannounceic'>[ckey] played <code>[melody]</code> (<a href='?src=[this_uid];action=silenceSound'>SILENCE</a>) (<a href='?src=[this_uid];action=muteAdmin&a=[ckey]'>ALWAYS SILENCE THIS ADMIN</a>)</span>")
+
 	log_admin("[key_name(src)] played a sound over intercoms [melody]")
 	message_admins("[key_name_admin(src)] played a sound over intercoms [melody]", 1)
 	SSblackbox.record_feedback("tally", "admin_verb", 1, "Play Sound via Intercoms")
