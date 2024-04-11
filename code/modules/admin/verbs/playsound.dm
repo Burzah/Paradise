@@ -95,6 +95,13 @@ GLOBAL_LIST_EMPTY(sounds_cache)
 	if(!melody)
 		return
 
+	// Sets the input volume for the sound
+	var/input_volume = tgui_input_number(usr, "How loud would you like this to be? (1-70)", "Volume", 35, 70, 1)
+	if(!input_volume)
+		return
+
+	var/sound_to_play = sound(melody, 0, 0, CHANNEL_ADMIN, input_volume)
+
 	// Allows for override to utilize intercoms on all z-levels
 	var/zlevel_override = tgui_alert(usr, "Do you want to play through intercoms on ALL Z-levels, or just the station?", "Z-level Override", list("Yes", "No"))
 	var/ignore_z = FALSE
@@ -114,5 +121,8 @@ GLOBAL_LIST_EMPTY(sounds_cache)
 			continue
 		if(!I.on && !ignore_power)
 			continue
-		play_sound(melody)
-		return
+		playsound(I, sound_to_play, input_volume)
+
+	log_admin("[key_name(src)] played a sound over intercoms [melody]")
+	message_admins("[key_name_admin(src)] played a sound over intercoms [melody]", 1)
+	SSblackbox.record_feedback("tally", "admin_verb", 1, "Play Sound via Intercoms")
