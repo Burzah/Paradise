@@ -1,7 +1,8 @@
 /datum/admins/proc/Secrets()
 
+	if(!check_rights(0))
+		return
 
-	if(!check_rights(0))	return
 	var/dat = "<html><meta charset='utf-8'><body><center>"
 
 	dat += "<a href='byond://?src=[UID()];secretsmenu=tab;tab=0' [current_tab == 0 ? "class='linkOn'" : ""]>Debug</a>"
