@@ -49,7 +49,7 @@
 		H.regenerate_icons()
 
 	message_admins("[key_name_admin(usr)] used THERE CAN BE ONLY ONE! -NO ATTACK LOGS WILL BE SENT TO ADMINS FROM THIS POINT FORTH-", 1)
-	log_admin("[key_name(usr)] used there can be only one.")
+	log_admin("[key_name(usr)] used highlander event")
 	GLOB.nologevent = 1
 
 	var/sound/music = sound('sound/music/thunderdome.ogg', channel = CHANNEL_ADMIN)
@@ -99,7 +99,7 @@
 		H.update_icons()
 
 	message_admins("[key_name_admin(usr)] used THERE CAN BE ONLY ME! -NO ATTACK LOGS WILL BE SENT TO ADMINS FROM THIS POINT FORTH-", 1)
-	log_admin("[key_name(usr)] used there can be only me.")
+	log_admin("[key_name(usr)] used there can be only me event")
 	GLOB.nologevent = 1
 
 	var/sound/music = sound('sound/music/thunderdome.ogg', channel = CHANNEL_ADMIN)
@@ -109,3 +109,58 @@
 				M.stop_sound_channel(CHANNEL_LOBBYMUSIC)
 			music.volume = 100 * M.client.prefs.get_channel_volume(CHANNEL_ADMIN)
 			SEND_SOUND(M, music)
+
+// /client/proc/kung_fu()
+// 	if(!SSticker)
+// 		alert("The game hasn't started yet!")
+// 		return
+
+// 	for(var/mob/living/carbon/human/H in GLOB.player_list)
+// 		if(H.stat == DEAD || !(H.client))
+// 			continue
+// 		if(is_special_character(H))
+// 			continue
+// 		if(is_type_in_list(H.dna.species, incompatible_species))
+// 			H.set_species(/datum/species/human)
+// 			var/datum/character_save/S = new	// Randomize appearance
+// 			S.randomise()
+// 			S.copy_to(H)
+
+// 		SSticker.mode.traitors += H.mind
+// 		H.mind.special_role = SPECIAL_ROLE_TRAITOR
+// 		H.mind.add_mind_objective(/datum/objective/hijack)
+
+// 		var/list/messages = list()
+// 		messages.Add("<b>You are a martial arts master. FIGHT TO THE DEATH!</b>")
+// 		messages.Add(H.mind.prepare_announce_objectives(FALSE))
+// 		to_chat(H, chat_box_red(messages.Join("<br>")))
+
+// 		for(var/obj/item/thing in H)
+// 			if(istype(thing, /obj/item/bio_chip))
+// 				continue
+// 			qdel(thing)
+
+// 		H.equip_to_slot_or_del(new /obj/item/clothing/under/costume/kilt(H), SLOT_HUD_JUMPSUIT)
+
+// 		var/obj/item/card/id/W = new(H)
+// 		W.name = "[H.real_name]'s ID Card"
+// 		W.icon_state = "centcom"
+// 		W.access = get_all_accesses()
+// 		W.access += get_all_centcom_access()
+// 		W.assignment = "Highlander"
+// 		W.registered_name = H.real_name
+// 		H.equip_to_slot_or_del(W, SLOT_HUD_WEAR_ID)
+// 		H.dna.species.after_equip_job(null, H)
+// 		H.regenerate_icons()
+
+// 	message_admins("[key_name_admin(usr)] used THERE CAN BE ONLY ONE! -NO ATTACK LOGS WILL BE SENT TO ADMINS FROM THIS POINT FORTH-", 1)
+// 	log_admin("[key_name(usr)] used kung fu event")
+// 	GLOB.nologevent = 1
+
+// 	var/sound/music = sound('sound/music/thunderdome.ogg', channel = CHANNEL_ADMIN)
+// 	for(var/mob/M in GLOB.player_list)
+// 		if(M.client.prefs.sound & SOUND_MIDI)
+// 			if(isnewplayer(M) && (M.client.prefs.sound & SOUND_LOBBY))
+// 				M.stop_sound_channel(CHANNEL_LOBBYMUSIC)
+// 			music.volume = 100 * M.client.prefs.get_channel_volume(CHANNEL_ADMIN)
+// 			SEND_SOUND(M, music)
