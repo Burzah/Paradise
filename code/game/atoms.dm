@@ -1188,8 +1188,8 @@ GLOBAL_LIST_EMPTY(blood_splatter_icons)
 	var/turf/curturf = get_turf(src)
 	if(curturf)
 		.["Jump to turf"] = "?_src_=holder;adminplayerobservecoodjump=1;X=[curturf.x];Y=[curturf.y];Z=[curturf.z]"
-	.["Add reagent"] = "?_src_=vars;addreagent=[UID()]"
-	.["Edit reagents"] = "?_src_=vars;editreagents=[UID()]"
+	.["Modify reagents"] = "?_src_=vars;modifyreagent=[UID()]"
+	// .["Edit reagents"] = "?_src_=vars;editreagents=[UID()]"
 	.["Trigger explosion"] = "?_src_=vars;explode=[UID()]"
 	.["Trigger EM pulse"] = "?_src_=vars;emp=[UID()]"
 

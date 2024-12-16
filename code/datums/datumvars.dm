@@ -933,47 +933,53 @@
 		message_admins("<span class='notice'>[key_name(usr)] modified the armor on [A] to: melee = [armorlist[MELEE]], bullet = [armorlist[BULLET]], laser = [armorlist[LASER]], energy = [armorlist[ENERGY]], bomb = [armorlist[BOMB]], rad = [armorlist[RAD]], fire = [armorlist[FIRE]], acid = [armorlist[ACID]], magic = [armorlist[MAGIC]]")
 		return TRUE
 
-	else if(href_list["addreagent"]) /* Made on /TG/, credit to them. */
-		if(!check_rights(R_DEBUG|R_ADMIN))	return
-
-		var/atom/A = locateUID(href_list["addreagent"])
-
-		if(!A.reagents)
-			var/amount = tgui_input_number(usr, "Specify the reagent size of [A]", "Set Reagent Size", 50)
-			if(amount)
-				A.create_reagents(amount)
-
-		if(A.reagents)
-			var/chosen_id
-			var/list/reagent_options = sortAssoc(GLOB.chemical_reagents_list)
-			switch(tgui_alert(usr, "Choose a method.", "Add Reagents", "Enter ID", "Choose ID"))
-				if("Enter ID")
-					var/valid_id
-					while(!valid_id)
-						chosen_id = stripped_input(usr, "Enter the ID of the reagent you want to add.")
-						if(!chosen_id) //Get me out of here!
-							break
-						for(var/ID in reagent_options)
-							if(ID == chosen_id)
-								valid_id = 1
-						if(!valid_id)
-							to_chat(usr, "<span class='warning'>A reagent with that ID doesn't exist!</span>")
-				if("Choose ID")
-					chosen_id = tgui_input_list(usr, "Choose a reagent to add.", "Choose a reagent.", reagent_options)
-			if(chosen_id)
-				var/amount = input(usr, "Choose the amount to add.", "Choose the amount.", A.reagents.maximum_volume) as num
-				if(amount)
-					A.reagents.add_reagent(chosen_id, amount)
-					log_admin("[key_name(usr)] has added [amount] units of [chosen_id] to \the [A]")
-					message_admins("<span class='notice'>[key_name(usr)] has added [amount] units of [chosen_id] to \the [A]</span>")
-
-	else if(href_list["editreagents"])
+	else if(href_list["modifyreagent"]) /* Made on /TG/, credit to them. */
 		if(!check_rights(R_DEBUG|R_ADMIN))
 			return
 
-		var/atom/A = locateUID(href_list["editreagents"])
+		var/atom/A = locateUID(href_list["modifyreagent"])
 
-		try_open_reagent_editor(A)
+		switch(tgui_input_list(usr, "Add or Edit Reagents?", "Modify Reagents", list("Add", "Edit")))
+			if("Add")
+				if(!A.reagents)
+					var/amount = tgui_input_number(usr, "Specify the reagent size of [A]", "Set Reagent Size", 50)
+					if(amount)
+						A.create_reagents(amount)
+
+				if(A.reagents)
+					var/chosen_id
+					var/list/reagent_options = sortAssoc(GLOB.chemical_reagents_list)
+					switch(tgui_alert(usr, "Choose a method.", "Add Reagents", "Enter ID", "Choose ID"))
+						if("Enter ID")
+							var/valid_id
+							while(!valid_id)
+								chosen_id = stripped_input(usr, "Enter the ID of the reagent you want to add.")
+								if(!chosen_id) //Get me out of here!
+									break
+								for(var/ID in reagent_options)
+									if(ID == chosen_id)
+										valid_id = 1
+								if(!valid_id)
+									to_chat(usr, "<span class='warning'>A reagent with that ID doesn't exist!</span>")
+						if("Choose ID")
+							chosen_id = tgui_input_list(usr, "Choose a reagent to add.", "Choose a reagent.", reagent_options)
+					if(chosen_id)
+						var/amount = input(usr, "Choose the amount to add.", "Choose the amount.", A.reagents.maximum_volume) as num
+						if(amount)
+							A.reagents.add_reagent(chosen_id, amount)
+							log_admin("[key_name(usr)] has added [amount] units of [chosen_id] to \the [A]")
+							message_admins("<span class='notice'>[key_name(usr)] has added [amount] units of [chosen_id] to \the [A]</span>")
+			if("Edit")
+				// var/atom/A = locateUID(href_list["editreagents"])
+				try_open_reagent_editor(A)
+
+	// else if(href_list["editreagents"])
+	// 	if(!check_rights(R_DEBUG|R_ADMIN))
+	// 		return
+
+	// 	var/atom/A = locateUID(href_list["editreagents"])
+
+	// 	try_open_reagent_editor(A)
 
 	else if(href_list["explode"])
 		if(!check_rights(R_DEBUG|R_EVENT))	return
