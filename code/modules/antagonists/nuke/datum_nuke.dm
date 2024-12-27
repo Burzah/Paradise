@@ -14,5 +14,6 @@ RESTRICT_TYPE(/datum/antagonist/nuke)
 	owner.current.faction |= "operative"
 	SEND_SOUND(owner.current, sounds('sound/ambience/antag/ops.ogg'))
 
-	var/datum/team/nuke/nuke =
+	var/datum/team/nuke/nuke = get_team()
+	ASSERT(nuke)
 
