@@ -204,6 +204,7 @@
 			return 0
 	if(!operating) //in case of emag
 		operating = DOOR_OPENING
+	recalculate_atmos_connectivity()
 	do_animate("opening")
 	set_opacity(FALSE)
 	playsound(loc, 'sound/machines/windowdoor.ogg', 100, 1)
@@ -235,11 +236,11 @@
 	density = TRUE
 	if(polarized_on)
 		set_opacity(TRUE)
-	recalculate_atmos_connectivity()
 	update_freelook_sight()
 	sleep(10)
 
 	operating = NONE
+	recalculate_atmos_connectivity()
 	return 1
 
 /obj/machinery/door/window/play_attack_sound(damage_amount, damage_type = BRUTE, damage_flag = 0)
@@ -312,10 +313,10 @@
 	operating = NONE
 	return TRUE
 
-/obj/machinery/door/window/attackby__legacy__attackchain(obj/item/I, mob/living/user, params)
+/obj/machinery/door/window/item_interaction(mob/living/user, obj/item/used, list/modifiers)
 	//If it's in the process of opening/closing, ignore the click
 	if(operating)
-		return
+		return ITEM_INTERACT_COMPLETE
 
 	add_fingerprint(user)
 	return ..()
@@ -385,6 +386,7 @@
 					ae = electronics
 					electronics = null
 					ae.forceMove(loc)
+				ae.is_installed = FALSE
 
 				qdel(src)
 	else
