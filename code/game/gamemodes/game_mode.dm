@@ -86,6 +86,8 @@
 
 	/// A list of all the nuclear operatives' minds
 	var/list/datum/mind/syndicates = list()
+	/// The Nuclear Operative team datum
+	var/datum/team/nuke/nuke_team
 
 	/// A list of all the minds of head revolutionaries
 	var/list/datum/mind/head_revolutionaries = list()

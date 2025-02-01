@@ -17,3 +17,4 @@ RESTRICT_TYPE(/datum/antagonist/nuke)
 	var/datum/team/nuke/nuke = get_team()
 	ASSERT(nuke)
 
+
