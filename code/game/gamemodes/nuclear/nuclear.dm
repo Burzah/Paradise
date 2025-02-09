@@ -1,5 +1,9 @@
 #define NUKESCALINGMODIFIER 6
 
+/datum/game_mode/proc/get_nuke_team()
+	if(!nuke_team)
+		new /datum/team/nuke
+
 /proc/issyndicate(mob/living/M as mob)
 	return istype(M) && M.mind && SSticker && SSticker.mode && (M.mind in SSticker.mode.syndicates)
 

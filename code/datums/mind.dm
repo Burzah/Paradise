@@ -1142,23 +1142,23 @@
 
 		switch(href_list["nuclear"])
 			if("clear")
-				if(src in SSticker.mode.syndicates)
-					SSticker.mode.syndicates -= src
-					SSticker.mode.update_synd_icons_removed(src)
-					special_role = null
-					objective_holder.clear(/datum/objective/nuclear)
-					to_chat(current, "<span class='warning'><font size='3'><b>You have been brainwashed! You are no longer a Syndicate operative!</b></font></span>")
-					log_admin("[key_name(usr)] has de-nuke op'd [key_name(current)]")
-					message_admins("[key_name_admin(usr)] has de-nuke op'd [key_name_admin(current)]")
+				if(!has_antag_datum(/datum/antagonist/nuke))
+					return
+				remove_antag_datum(/datum/antagonist/nuke)
+				objective_holder.clear(/datum/objective/nuclear)
+				to_chat(current, "<span class='warning'><font size='3'><b>You have been brainwashed! You are no longer a Syndicate operative!</b></font></span>")
+				log_admin("[key_name(usr)] has de-nuke op'd [key_name(current)]")
+				message_admins("[key_name_admin(usr)] has de-nuke op'd [key_name_admin(current)]")
 			if("nuclear")
+				if(has_antag_datum(/datum/antagonist/nuke))
+					to_chat(usr, "[current] is already an operative!")
 				if(!(src in SSticker.mode.syndicates))
-					SSticker.mode.syndicates += src
-					SSticker.mode.update_synd_icons_added(src)
+					add_antag_datum(/datum/antagonist/nuke)
 					if(length(SSticker.mode.syndicates) == 1)
 						SSticker.mode.prepare_syndicate_leader(src)
 					else
 						current.real_name = "[syndicate_name()] Operative #[length(SSticker.mode.syndicates) - 1]"
-					special_role = SPECIAL_ROLE_NUKEOPS
+
 					to_chat(current, "<span class='notice'>You are a [syndicate_name()] agent!</span>")
 					SSticker.mode.forge_syndicate_objectives(src)
 					SSticker.mode.greet_syndicate(src, FALSE) // False to fix the agent message appearing twice
