@@ -37,7 +37,7 @@ RESTRICT_TYPE(/datum/antagonist/nuke)
 	return SSticker.mode.nuke_team
 
 ///Used for setting up the mobs and equipping them
-/datum/antagonist/nuke/proc/equip_nukies
+/datum/antagonist/nuke/proc/equip_nukies()
 	var/radio_freq = SYND_FREQ
 
 	var/obj/item/radio/R = new /obj/item/radio/headset/syndicate/alt(synd_mob)

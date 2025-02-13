@@ -108,7 +108,7 @@
 		forge_syndicate_objectives(synd_mind)
 		create_syndicate(synd_mind, the_bomb)
 		greet_syndicate(synd_mind)
-		equip_syndicate(synd_mind.current)
+		// equip_syndicate(synd_mind.current)
 
 		if(!leader_selected)
 			prepare_syndicate_leader(synd_mind, the_bomb)
@@ -119,7 +119,7 @@
 
 			agent_number++
 		spawnpos++
-		update_synd_icons_added(synd_mind)
+		// update_synd_icons_added(synd_mind)
 
 	scale_telecrystals()
 	share_telecrystals()
