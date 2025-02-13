@@ -402,7 +402,7 @@
 
 /datum/mind/proc/memory_edit_nuclear(mob/living/carbon/human/H)
 	. = _memory_edit_header("nuclear")
-	if(src in SSticker.mode.syndicates)
+	if(has_antag_datum(/datum/antagonist/nuke))
 		. += "<b><font color='red'>OPERATIVE</b></font>|<a href='byond://?src=[UID()];nuclear=clear'>no</a>"
 		. += "<br><a href='byond://?src=[UID()];nuclear=lair'>To shuttle</a>, <a href='byond://?src=[UID()];common=undress'>undress</a>, <a href='byond://?src=[UID()];nuclear=dressup'>dress up</a>."
 		var/code
@@ -1152,7 +1152,7 @@
 			if("nuclear")
 				if(has_antag_datum(/datum/antagonist/nuke))
 					to_chat(usr, "[current] is already an operative!")
-				if(!(src in SSticker.mode.syndicates))
+				if(!has_antag_datum(/datum/antagonist/nuke))
 					add_antag_datum(/datum/antagonist/nuke)
 					if(length(SSticker.mode.syndicates) == 1)
 						SSticker.mode.prepare_syndicate_leader(src)

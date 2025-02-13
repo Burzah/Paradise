@@ -2,7 +2,8 @@
 
 /datum/game_mode/proc/get_nuke_team()
 	if(!nuke_team)
-		new /datum/team/nuke
+		new /datum/team/nuke()
+	return nuke_team
 
 /proc/issyndicate(mob/living/M as mob)
 	return istype(M) && M.mind && SSticker && SSticker.mode && (M.mind in SSticker.mode.syndicates)
@@ -75,22 +76,6 @@
 		else
 			to_chat(operative_mind.current, "<span class='userdanger'>You have been brainwashed! You are no longer a Syndicate operative.</span>")
 		SSticker.mode.update_synd_icons_removed(operative_mind)
-
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
-
-/datum/game_mode/proc/update_synd_icons_added(datum/mind/synd_mind)
-	var/datum/atom_hud/antag/opshud = GLOB.huds[ANTAG_HUD_OPS]
-	opshud.join_hud(synd_mind.current)
-	set_antag_hud(synd_mind.current, "hudoperative")
-
-/datum/game_mode/proc/update_synd_icons_removed(datum/mind/synd_mind)
-	var/datum/atom_hud/antag/opshud = GLOB.huds[ANTAG_HUD_OPS]
-	opshud.leave_hud(synd_mind.current)
-	set_antag_hud(synd_mind.current, null)
-
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
 
 /datum/game_mode/nuclear/post_setup()
 
@@ -258,65 +243,65 @@
 	return 1337 // WHY??? -- Doohl
 
 
-/datum/game_mode/proc/equip_syndicate(mob/living/carbon/human/synd_mob, uplink_uses = 100)
-	var/radio_freq = SYND_FREQ
+// /datum/game_mode/proc/equip_syndicate(mob/living/carbon/human/synd_mob, uplink_uses = 100)
+	// var/radio_freq = SYND_FREQ
 
-	var/obj/item/radio/R = new /obj/item/radio/headset/syndicate/alt(synd_mob)
-	R.set_frequency(radio_freq)
-	synd_mob.equip_to_slot_or_del(R, ITEM_SLOT_LEFT_EAR)
+	// var/obj/item/radio/R = new /obj/item/radio/headset/syndicate/alt(synd_mob)
+	// R.set_frequency(radio_freq)
+	// synd_mob.equip_to_slot_or_del(R, ITEM_SLOT_LEFT_EAR)
 
-	var/back
+	// var/back
 
-	switch(synd_mob.backbag)
-		if(GBACKPACK, DBACKPACK)
-			back = /obj/item/storage/backpack
-		if(GSATCHEL, DSATCHEL)
-			back = /obj/item/storage/backpack/satchel_norm
-		if(GDUFFLEBAG, DDUFFLEBAG)
-			back = /obj/item/storage/backpack/duffel
-		if(LSATCHEL)
-			back = /obj/item/storage/backpack/satchel
-		else
-			back = /obj/item/storage/backpack
+	// switch(synd_mob.backbag)
+	// 	if(GBACKPACK, DBACKPACK)
+	// 		back = /obj/item/storage/backpack
+	// 	if(GSATCHEL, DSATCHEL)
+	// 		back = /obj/item/storage/backpack/satchel_norm
+	// 	if(GDUFFLEBAG, DDUFFLEBAG)
+	// 		back = /obj/item/storage/backpack/duffel
+	// 	if(LSATCHEL)
+	// 		back = /obj/item/storage/backpack/satchel
+	// 	else
+	// 		back = /obj/item/storage/backpack
 
-	synd_mob.equip_to_slot_or_del(new /obj/item/clothing/under/syndicate(synd_mob), ITEM_SLOT_JUMPSUIT)
-	synd_mob.equip_to_slot_or_del(new /obj/item/clothing/shoes/combat(synd_mob), ITEM_SLOT_SHOES)
-	synd_mob.equip_or_collect(new /obj/item/clothing/gloves/combat(synd_mob), ITEM_SLOT_GLOVES)
-	synd_mob.equip_to_slot_or_del(new /obj/item/card/id/syndicate(synd_mob), ITEM_SLOT_ID)
-	synd_mob.equip_to_slot_or_del(new back(synd_mob), ITEM_SLOT_BACK)
-	synd_mob.equip_to_slot_or_del(new /obj/item/gun/projectile/automatic/pistol(synd_mob), ITEM_SLOT_BELT)
-	synd_mob.equip_to_slot_or_del(new /obj/item/storage/box/survival_syndi(synd_mob.back), ITEM_SLOT_IN_BACKPACK)
-	synd_mob.equip_to_slot_or_del(new /obj/item/pinpointer/nukeop(synd_mob), ITEM_SLOT_PDA)
-	var/obj/item/radio/uplink/nuclear/U = new /obj/item/radio/uplink/nuclear(synd_mob)
-	U.hidden_uplink.uplink_owner="[synd_mob.key]"
-	U.hidden_uplink.uses = uplink_uses
-	synd_mob.equip_to_slot_or_del(U, ITEM_SLOT_IN_BACKPACK)
-	synd_mob.mind.offstation_role = TRUE
+	// synd_mob.equip_to_slot_or_del(new /obj/item/clothing/under/syndicate(synd_mob), ITEM_SLOT_JUMPSUIT)
+	// synd_mob.equip_to_slot_or_del(new /obj/item/clothing/shoes/combat(synd_mob), ITEM_SLOT_SHOES)
+	// synd_mob.equip_or_collect(new /obj/item/clothing/gloves/combat(synd_mob), ITEM_SLOT_GLOVES)
+	// synd_mob.equip_to_slot_or_del(new /obj/item/card/id/syndicate(synd_mob), ITEM_SLOT_ID)
+	// synd_mob.equip_to_slot_or_del(new back(synd_mob), ITEM_SLOT_BACK)
+	// synd_mob.equip_to_slot_or_del(new /obj/item/gun/projectile/automatic/pistol(synd_mob), ITEM_SLOT_BELT)
+	// synd_mob.equip_to_slot_or_del(new /obj/item/storage/box/survival_syndi(synd_mob.back), ITEM_SLOT_IN_BACKPACK)
+	// synd_mob.equip_to_slot_or_del(new /obj/item/pinpointer/nukeop(synd_mob), ITEM_SLOT_PDA)
+	// var/obj/item/radio/uplink/nuclear/U = new /obj/item/radio/uplink/nuclear(synd_mob)
+	// U.hidden_uplink.uplink_owner="[synd_mob.key]"
+	// U.hidden_uplink.uses = uplink_uses
+	// synd_mob.equip_to_slot_or_del(U, ITEM_SLOT_IN_BACKPACK)
+	// synd_mob.mind.offstation_role = TRUE
 
-	if(synd_mob.dna.species)
-		var/race = synd_mob.dna.species.name
+	// if(synd_mob.dna.species)
+	// 	var/race = synd_mob.dna.species.name
 
-		switch(race)
-			if("Vox")
-				synd_mob.equip_to_slot_or_del(new /obj/item/clothing/mask/gas/syndicate(synd_mob), ITEM_SLOT_MASK)
-				synd_mob.equip_to_slot_or_del(new /obj/item/tank/internals/emergency_oxygen/double/vox(synd_mob), ITEM_SLOT_LEFT_HAND)
-				synd_mob.internal = synd_mob.l_hand
-				synd_mob.update_action_buttons_icon()
+	// 	switch(race)
+	// 		if("Vox")
+	// 			synd_mob.equip_to_slot_or_del(new /obj/item/clothing/mask/gas/syndicate(synd_mob), ITEM_SLOT_MASK)
+	// 			synd_mob.equip_to_slot_or_del(new /obj/item/tank/internals/emergency_oxygen/double/vox(synd_mob), ITEM_SLOT_LEFT_HAND)
+	// 			synd_mob.internal = synd_mob.l_hand
+	// 			synd_mob.update_action_buttons_icon()
 
-			if("Plasmaman")
-				synd_mob.equip_to_slot_or_del(new /obj/item/clothing/mask/gas/syndicate(synd_mob), ITEM_SLOT_MASK)
-				synd_mob.equip_or_collect(new /obj/item/tank/internals/plasmaman(synd_mob), ITEM_SLOT_SUIT_STORE)
-				synd_mob.equip_or_collect(new /obj/item/extinguisher_refill(synd_mob), ITEM_SLOT_IN_BACKPACK)
-				synd_mob.equip_or_collect(new /obj/item/extinguisher_refill(synd_mob), ITEM_SLOT_IN_BACKPACK)
-				synd_mob.internal = synd_mob.get_item_by_slot(ITEM_SLOT_SUIT_STORE)
-				synd_mob.update_action_buttons_icon()
+	// 		if("Plasmaman")
+	// 			synd_mob.equip_to_slot_or_del(new /obj/item/clothing/mask/gas/syndicate(synd_mob), ITEM_SLOT_MASK)
+	// 			synd_mob.equip_or_collect(new /obj/item/tank/internals/plasmaman(synd_mob), ITEM_SLOT_SUIT_STORE)
+	// 			synd_mob.equip_or_collect(new /obj/item/extinguisher_refill(synd_mob), ITEM_SLOT_IN_BACKPACK)
+	// 			synd_mob.equip_or_collect(new /obj/item/extinguisher_refill(synd_mob), ITEM_SLOT_IN_BACKPACK)
+	// 			synd_mob.internal = synd_mob.get_item_by_slot(ITEM_SLOT_SUIT_STORE)
+	// 			synd_mob.update_action_buttons_icon()
 
-	synd_mob.rejuvenate() //fix any damage taken by naked vox/plasmamen/etc while round setups
-	var/obj/item/bio_chip/explosive/E = new/obj/item/bio_chip/explosive(synd_mob)
-	E.implant(synd_mob)
-	synd_mob.faction |= "syndicate"
-	synd_mob.update_icons()
-	return 1
+	// synd_mob.rejuvenate() //fix any damage taken by naked vox/plasmamen/etc while round setups
+	// var/obj/item/bio_chip/explosive/E = new/obj/item/bio_chip/explosive(synd_mob)
+	// E.implant(synd_mob)
+	// synd_mob.faction |= "syndicate"
+	// synd_mob.update_icons()
+	// return 1
 
 
 /datum/game_mode/proc/is_operatives_are_dead()
