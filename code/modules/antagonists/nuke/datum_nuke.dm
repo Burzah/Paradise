@@ -1,6 +1,6 @@
-RESTRICT_TYPE(/datum/antagonist/nuke)
+RESTRICT_TYPE(/datum/antagonist/nuclear_operatives)
 
-/datum/antagonist/nuke
+/datum/antagonist/nuclear_operatives
 	name = "Nuclear Operative"
 	job_rank = ROLE_OPERATIVE
 	special_role = SPECIAL_ROLE_NUKEOPS
@@ -9,35 +9,35 @@ RESTRICT_TYPE(/datum/antagonist/nuke)
 	antag_hud_type = ANTAG_HUD_OPS
 	wiki_page_name = "Operative"
 
-/datum/antagonist/nuke/on_gain()
+/datum/antagonist/nuclear_operatives/on_gain()
 	create_team()
 	..()
 	owner.current.faction |= "operative"
 	SEND_SOUND(owner.current, sounds('sound/ambience/antag/ops.ogg'))
 
 	var/datum/team/nuke/nuke = get_team()
-	ASSERT(nuke)
+	nuke.study_objectives(owner.current)
 
-/datum/antagonist/nuke/add_owner_to_gamemode()
+/datum/antagonist/nuclear_operatives/add_owner_to_gamemode()
 	SSticker.mode.syndicates |= owner
 
-/datum/antagonist/nuke/remove_owner_from_gamemode()
+/datum/antagonist/nuclear_operatives/remove_owner_from_gamemode()
 	SSticker.mode.syndicate -= owner
 
-/datum/antagonist/nuke/greet() //TODO: Figure out greeting
+/datum/antagonist/nuclear_operatives/greet() //TODO: Figure out greeting
 	return
 
-/datum/antagonist/nuke/farewell() //TODO: Figure out farewell
+/datum/antagonist/nuclear_operatives/farewell() //TODO: Figure out farewell
 	return
 
-/datum/antagonist/nuke/create_team(team)
+/datum/antagonist/nuclear_operatives/create_team(team)
 	return SSticker.mode.get_nuke_team()
 
-/datum/antagonist/nuke/get_team()
+/datum/antagonist/nuclear_operatives/get_team()
 	return SSticker.mode.nuke_team
 
 ///Used for setting up the mobs and equipping them
-/datum/antagonist/nuke/proc/equip_nukies()
+/datum/antagonist/nuclear_operatives/proc/equip_nukies(/mob/living/carbon/human/synd_mob, uplink_uses = 100)
 	var/radio_freq = SYND_FREQ
 
 	var/obj/item/radio/R = new /obj/item/radio/headset/syndicate/alt(synd_mob)

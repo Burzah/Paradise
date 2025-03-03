@@ -64,18 +64,18 @@
 	..()
 	return 1
 
-/datum/game_mode/proc/remove_operative(datum/mind/operative_mind)
-	if(operative_mind in syndicates)
-		SSticker.mode.syndicates -= operative_mind
-		operative_mind.special_role = null
-		operative_mind.objective_holder.clear(/datum/objective/nuclear)
-		operative_mind.current.create_attack_log("<span class='danger'>No longer nuclear operative</span>")
-		operative_mind.current.create_log(CONVERSION_LOG, "No longer nuclear operative")
-		if(issilicon(operative_mind.current))
-			to_chat(operative_mind.current, "<span class='userdanger'>You have been turned into a robot! You are no longer a Syndicate operative.</span>")
-		else
-			to_chat(operative_mind.current, "<span class='userdanger'>You have been brainwashed! You are no longer a Syndicate operative.</span>")
-		SSticker.mode.update_synd_icons_removed(operative_mind)
+// /datum/game_mode/proc/remove_operative(datum/mind/operative_mind)
+// 	if(operative_mind in syndicates)
+// 		SSticker.mode.syndicates -= operative_mind
+// 		operative_mind.special_role = null
+// 		operative_mind.objective_holder.clear(/datum/objective/nuclear)
+// 		operative_mind.current.create_attack_log("<span class='danger'>No longer nuclear operative</span>")
+// 		operative_mind.current.create_log(CONVERSION_LOG, "No longer nuclear operative")
+// 		if(issilicon(operative_mind.current))
+// 			to_chat(operative_mind.current, "<span class='userdanger'>You have been turned into a robot! You are no longer a Syndicate operative.</span>")
+// 		else
+// 			to_chat(operative_mind.current, "<span class='userdanger'>You have been brainwashed! You are no longer a Syndicate operative.</span>")
+// 		SSticker.mode.update_synd_icons_removed(operative_mind)
 
 /datum/game_mode/nuclear/post_setup()
 

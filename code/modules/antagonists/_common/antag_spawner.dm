@@ -66,30 +66,30 @@
 		checking = FALSE
 		to_chat(user, "<span class='warning'>Unable to connect to Syndicate command. Please wait and try again later or use the teleporter on your uplink to get your points refunded.</span>")
 
-/obj/item/antag_spawner/nuke_ops/spawn_antag(client/C, turf/T, kind, datum/mind/user)
-	var/mob/living/carbon/human/M = new/mob/living/carbon/human(T)
+// /obj/item/antag_spawner/nuke_ops/spawn_antag(client/C, turf/T, kind, datum/mind/user)
+// 	var/mob/living/carbon/human/M = new/mob/living/carbon/human(T)
 
-	var/agent_number = LAZYLEN(SSticker.mode.syndicates) - 1
-	M.real_name = "[syndicate_name()] Operative #[agent_number]"
+// 	var/agent_number = LAZYLEN(SSticker.mode.syndicates) - 1
+// 	M.real_name = "[syndicate_name()] Operative #[agent_number]"
 
-	set_syndicate_values(C, M)
-	SSticker.mode.create_syndicate(M.mind)
-	SSticker.mode.equip_syndicate(M, 0)
-	SSticker.mode.update_syndicate_id(M.mind, FALSE)
+// 	set_syndicate_values(C, M)
+// 	SSticker.mode.create_syndicate(M.mind)
+// 	SSticker.mode.equip_syndicate(M, 0)
+// 	SSticker.mode.update_syndicate_id(M.mind, FALSE)
 
-/obj/item/antag_spawner/nuke_ops/proc/set_syndicate_values(client/C, mob/living/M)
-	M.key = C.key
+// /obj/item/antag_spawner/nuke_ops/proc/set_syndicate_values(client/C, mob/living/M)
+// 	M.key = C.key
 
-	SSticker.mode.syndicates += M.mind
-	SSticker.mode.update_synd_icons_added(M.mind)
+// 	SSticker.mode.syndicates += M.mind
+// 	SSticker.mode.update_synd_icons_added(M.mind)
 
-	M.mind.assigned_role = SPECIAL_ROLE_NUKEOPS
-	M.mind.special_role = SPECIAL_ROLE_NUKEOPS
-	M.mind.offstation_role = TRUE
+// 	M.mind.assigned_role = SPECIAL_ROLE_NUKEOPS
+// 	M.mind.special_role = SPECIAL_ROLE_NUKEOPS
+// 	M.mind.offstation_role = TRUE
 
-	M.faction = list("syndicate")
-	SSticker.mode.forge_syndicate_objectives(M.mind)
-	SSticker.mode.greet_syndicate(M.mind)
+// 	M.faction = list("syndicate")
+// 	SSticker.mode.forge_syndicate_objectives(M.mind)
+// 	SSticker.mode.greet_syndicate(M.mind)
 
 //////SYNDICATE BORG
 /obj/item/antag_spawner/nuke_ops/borg_tele
