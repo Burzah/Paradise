@@ -33,3 +33,8 @@
 			operatives++
 		// else if(istype(M.current, ) // TODO: Figure out how to plug cyborgs into this
 
+	if(length(minds_to_remove))
+		for(var/datum/mind/M as anything in minds_to_remove)
+			remove_member(M)
+
+	return operatives + cyborgs
