@@ -12,24 +12,28 @@
 	name = "nuclear emergency"
 	config_tag = "nuclear"
 	tdm_gamemode = TRUE
-	required_players = 30	// 30 players - 5 players to be the nuke ops = 25 players remaining
+	// 30 players - 5 players to be the nuke ops = 25 players remaining
+	required_players = 30
 	required_enemies = 5
 	recommended_enemies = 5
 	single_antag_positions = list()
 
 	var/const/agents_possible = 5 //If we ever need more syndicate agents.
 
-	var/nukes_left = 1 //Call 3714-PRAY right now and order more nukes! Limited offer!
-	var/nuke_off_station = 0 //Used for tracking if the syndies actually haul the nuke to the station
-	var/syndies_didnt_escape = 0 //Used for tracking if the syndies got the shuttle off of the z-level
-	var/total_tc = 0 //Total amount of telecrystals shared between nuke ops
+	var/nukes_left = 1
+	/// Used for tracking if the syndies actually haul the nuke to the station
+	var/nuke_off_station = 0
+	/// Used for tracking if the syndies got the shuttle off of the z-level
+	var/syndies_didnt_escape = 0
+	/// Total amount of telecrystals shared between nuke ops
+	var/total_tc = 0
 
 /datum/game_mode/nuclear/announce()
 	to_chat(world, "<B>The current game mode is - Nuclear Emergency!</B>")
 	to_chat(world, "<B>A [syndicate_name()] Strike Force is approaching [station_name()]!</B>")
 	to_chat(world, "A nuclear explosive was being transported by Nanotrasen to a military base. The transport ship mysteriously lost contact with Space Traffic Control (STC). About that time a strange disk was discovered around [station_name()]. It was identified by Nanotrasen as a nuclear authentication disk and now Syndicate Operatives have arrived to retake the disk and detonate SS13! There are most likely Syndicate starships are in the vicinity, so take care not to lose the disk!\n<B>Syndicate</B>: Reclaim the disk and detonate the nuclear bomb anywhere on SS13.\n<B>Personnel</B>: Hold the disk and <B>escape with the disk</B> on the shuttle!")
 
-/datum/game_mode/nuclear/can_start()//This could be better, will likely have to recode it later
+/datum/game_mode/nuclear/can_start()
 	if(!..())
 		return 0
 
@@ -54,9 +58,6 @@
 		possible_syndicates -= new_syndicate //So it doesn't pick the same guy each time.
 		agent_number--
 
-	for(var/datum/mind/synd_mind in syndicates)
-		synd_mind.assigned_role = SPECIAL_ROLE_NUKEOPS //So they aren't chosen for other jobs.
-		synd_mind.special_role = SPECIAL_ROLE_NUKEOPS
 	return 1
 
 
@@ -78,53 +79,54 @@
 // 		SSticker.mode.update_synd_icons_removed(operative_mind)
 
 /datum/game_mode/nuclear/post_setup()
+	new /datum/team/nuke
 
-	var/list/turf/synd_spawn = list()
+	// var/list/turf/synd_spawn = list()
 
-	for(var/obj/effect/landmark/spawner/syndie/S in GLOB.landmarks_list)
-		synd_spawn += get_turf(S)
-		qdel(S)
-		continue
+	// for(var/obj/effect/landmark/spawner/syndie/S in GLOB.landmarks_list)
+	// 	synd_spawn += get_turf(S)
+	// 	qdel(S)
+	// 	continue
 
-	var/obj/machinery/nuclearbomb/syndicate/the_bomb
-	var/nuke_code = rand(10000, 99999)
-	var/leader_selected = 0
-	var/agent_number = 1
-	var/spawnpos = 1
+	// var/obj/machinery/nuclearbomb/syndicate/the_bomb
+	// var/nuke_code = rand(10000, 99999)
+	// var/leader_selected = 0
+	// var/agent_number = 1
+	// var/spawnpos = 1
 
-	for(var/obj/effect/landmark/spawner/nuclear_bomb/syndicate/nuke_spawn in GLOB.landmarks_list)
-		if(!length(synd_spawn))
-			break
+	// for(var/obj/effect/landmark/spawner/nuclear_bomb/syndicate/nuke_spawn in GLOB.landmarks_list)
+	// 	if(!length(synd_spawn))
+	// 		break
 
-		the_bomb = new /obj/machinery/nuclearbomb/syndicate(get_turf(nuke_spawn))
-		the_bomb.r_code = nuke_code
-		break
+	// 	the_bomb = new /obj/machinery/nuclearbomb/syndicate(get_turf(nuke_spawn))
+	// 	the_bomb.r_code = nuke_code
+	// 	break
 
-	for(var/datum/mind/synd_mind in syndicates)
-		if(spawnpos > length(synd_spawn))
-			spawnpos = 2
-		synd_mind.current.loc = synd_spawn[spawnpos]
-		synd_mind.offstation_role = TRUE
-		forge_syndicate_objectives(synd_mind)
-		create_syndicate(synd_mind, the_bomb)
-		greet_syndicate(synd_mind)
-		// equip_syndicate(synd_mind.current)
+	// for(var/datum/mind/synd_mind in syndicates)
+	// 	if(spawnpos > length(synd_spawn))
+	// 		spawnpos = 2
+	// 	synd_mind.current.loc = synd_spawn[spawnpos]
+	// 	synd_mind.offstation_role = TRUE
+	// 	forge_syndicate_objectives(synd_mind)
+	// 	create_syndicate(synd_mind, the_bomb)
+	// 	greet_syndicate(synd_mind)
+	// 	// equip_syndicate(synd_mind.current)
 
-		if(!leader_selected)
-			prepare_syndicate_leader(synd_mind, the_bomb)
-			leader_selected = 1
-		else
-			synd_mind.current.real_name = "[syndicate_name()] Operative #[agent_number]"
-			update_syndicate_id(synd_mind, FALSE)
+	// 	if(!leader_selected)
+	// 		prepare_syndicate_leader(synd_mind, the_bomb)
+	// 		leader_selected = 1
+	// 	else
+	// 		synd_mind.current.real_name = "[syndicate_name()] Operative #[agent_number]"
+	// 		update_syndicate_id(synd_mind, FALSE)
 
-			agent_number++
-		spawnpos++
-		// update_synd_icons_added(synd_mind)
+	// 		agent_number++
+	// 	spawnpos++
+	// 	// update_synd_icons_added(synd_mind)
 
-	scale_telecrystals()
-	share_telecrystals()
+	// scale_telecrystals()
+	// share_telecrystals()
 
-	return ..()
+	// return ..()
 
 /datum/game_mode/nuclear/proc/scale_telecrystals()
 	var/list/living_crew = get_living_players(exclude_nonhuman = FALSE, exclude_offstation = TRUE)
@@ -319,7 +321,7 @@
 		if(!D.onCentcom())
 			disk_rescued = 0
 			break
-	var/crew_evacuated = (SSshuttle.emergency.mode >= SHUTTLE_ESCAPE)
+	var/crew_evacuated  = (SSshuttle.emergency.mode >= SHUTTLE_ESCAPE)
 	//var/operatives_are_dead = is_operatives_are_dead()
 
 
