@@ -112,12 +112,12 @@
 	// 	spawnpos++
 	// 	// update_synd_icons_added(synd_mind)
 
-	// scale_telecrystals() // TODO: moved out of post setup to datum
-	// share_telecrystals() // TODO: moved out of post setup to datum
+	// scale_telecrystals() // TODO: proc moved out gamemode to datum
+	// share_telecrystals() // TODO: proc moved out gamemode to datum
 
 	// return ..()
 
-
+// TODO: move this to the antag datum
 /datum/game_mode/proc/greet_syndicate(datum/mind/syndicate, you_are=1)
 	SEND_SOUND(syndicate.current, sound('sound/ambience/antag/ops.ogg'))
 	var/list/messages = list()
