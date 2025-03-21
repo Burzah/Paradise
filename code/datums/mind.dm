@@ -402,7 +402,7 @@
 
 /datum/mind/proc/memory_edit_nuclear(mob/living/carbon/human/H)
 	. = _memory_edit_header("nuclear")
-	if(has_antag_datum(/datum/antagonist/nuclear_operatives))
+	if(has_antag_datum(/datum/antagonist/nuclear_operative))
 		. += "<b><font color='red'>OPERATIVE</b></font>|<a href='byond://?src=[UID()];nuclear=clear'>no</a>"
 		. += "<br><a href='byond://?src=[UID()];nuclear=lair'>To shuttle</a>, <a href='byond://?src=[UID()];common=undress'>undress</a>, <a href='byond://?src=[UID()];nuclear=dressup'>dress up</a>."
 		var/code
@@ -1137,33 +1137,24 @@
 				log_admin("[key_name(usr)] has set [key_name(current)]'s current swarms to [new_swarms].")
 				message_admins("[key_name_admin(usr)] has set [key_name_admin(current)]'s current swarms to [new_swarms].")
 
+// TODO: EDIT THIS TO REFLECT ALL CURRENT CHANGES and update "nuclear"
 	else if(href_list["nuclear"])
 		var/mob/living/carbon/human/H = current
 
 		switch(href_list["nuclear"])
 			if("clear")
-				if(!has_antag_datum(/datum/antagonist/nuclear_operatives))
+				if(!has_antag_datum(/datum/antagonist/nuclear_operative))
 					return
-				remove_antag_datum(/datum/antagonist/nuclear_operatives)
-				objective_holder.clear(/datum/objective/nuclear)
+				remove_antag_datum(/datum/antagonist/nuclear_operative)
 				to_chat(current, "<span class='warning'><font size='3'><b>You have been brainwashed! You are no longer a Syndicate operative!</b></font></span>")
 				log_admin("[key_name(usr)] has de-nuke op'd [key_name(current)]")
 				message_admins("[key_name_admin(usr)] has de-nuke op'd [key_name_admin(current)]")
 			if("nuclear")
-				if(has_antag_datum(/datum/antagonist/nuclear_operatives))
-					to_chat(usr, "[current] is already an operative!")
-				if(!has_antag_datum(/datum/antagonist/nuclear_operatives))
-					add_antag_datum(/datum/antagonist/nuclear_operatives)
-					if(length(SSticker.mode.syndicates) == 1)
-						SSticker.mode.prepare_syndicate_leader(src)
-					else
-						current.real_name = "[syndicate_name()] Operative #[length(SSticker.mode.syndicates) - 1]"
-
-					to_chat(current, "<span class='notice'>You are a [syndicate_name()] agent!</span>")
-					SSticker.mode.forge_syndicate_objectives(src)
-					SSticker.mode.greet_syndicate(src, FALSE) // False to fix the agent message appearing twice
-					log_admin("[key_name(usr)] has nuke op'd [key_name(current)]")
-					message_admins("[key_name_admin(usr)] has nuke op'd [key_name_admin(current)]")
+				to_chat(current, "<span class='notice'>You are a [syndicate_name()] agent!</span>")
+				// SSticker.mode.forge_syndicate_objectives(src)
+				// SSticker.mode.greet_syndicate(src, FALSE) // False to fix the agent message appearing twice
+				log_admin("[key_name(usr)] has nuke op'd [key_name(current)]")
+				message_admins("[key_name_admin(usr)] has nuke op'd [key_name_admin(current)]")
 			if("lair")
 				current.forceMove(get_turf(locate("landmark*Syndicate-Spawn")))
 				log_admin("[key_name(usr)] has moved [key_name(current)] to the nuclear operative spawn")

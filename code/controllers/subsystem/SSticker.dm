@@ -373,7 +373,7 @@ SUBSYSTEM_DEF(ticker)
 	addtimer(CALLBACK(src, PROC_REF(handle_antagfishing_reporting)), 10 SECONDS)
 	return TRUE
 
-
+// TODO: Double check to see what/if changes need to be made here
 /datum/controller/subsystem/ticker/proc/station_explosion_cinematic(nuke_site = NUKE_SITE_ON_STATION, override = null)
 	if(cinematic)
 		return	//already a cinematic in progress!

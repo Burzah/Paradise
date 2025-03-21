@@ -1,6 +1,6 @@
-RESTRICT_TYPE(/datum/antagonist/nuclear_operatives)
+RESTRICT_TYPE(/datum/antagonist/nuclear_operative)
 
-/datum/antagonist/nuclear_operatives
+/datum/antagonist/nuclear_operative
 	name = "Nuclear Operative"
 	job_rank = ROLE_OPERATIVE
 	special_role = SPECIAL_ROLE_NUKEOPS
@@ -9,46 +9,43 @@ RESTRICT_TYPE(/datum/antagonist/nuclear_operatives)
 	antag_hud_type = ANTAG_HUD_OPS
 	wiki_page_name = "Operative"
 
-/datum/antagonist/nuclear_operatives/on_gain()
+/datum/antagonist/nuclear_operative/on_gain()
 	create_team()
 	..()
 	owner.current.faction |= "operative"
 	owner.current.create_log(CONVERSION_LOG, "Joined as Nuclear Operative")
 	SEND_SOUND(owner.current, sounds('sound/ambience/antag/ops.ogg'))
 
-	var/datum/team/nuke/nuke = get_team()
-	nuke.study_objectives(owner.current)
-
-/datum/antagonist/nuclear_operatives/detach_from_owner()
+/datum/antagonist/nuclear_operative/detach_from_owner()
 	if(!owner.current)
 		return ..()
 	owner.current.faction -= "operative"
 	owner.current.create_log(CONVERSION_LOG, "Removed from Nuclear Operatives")
 
 // TODO: change syndicates in gamemode code to operative for clarity
-/datum/antagonist/nuclear_operatives/add_owner_to_gamemode()
+/datum/antagonist/nuclear_operative/add_owner_to_gamemode()
 	SSticker.mode.syndicates |= owner
 
 // TODO: change syndicates in gamemode code to operative for clarity
-/datum/antagonist/nuclear_operatives/remove_owner_from_gamemode()
+/datum/antagonist/nuclear_operative/remove_owner_from_gamemode()
 	SSticker.mode.syndicates -= owner
 
 // TODO: Figure out greeting (might not need this?)
-/datum/antagonist/nuclear_operatives/greet()
+/datum/antagonist/nuclear_operative/greet()
 	return
 
 // TODO: Figure out farewell (might not need this?)
-/datum/antagonist/nuclear_operatives/farewell()
+/datum/antagonist/nuclear_operative/farewell()
 	return
 
-/datum/antagonist/nuclear_operatives/create_team(team)
+/datum/antagonist/nuclear_operative/create_team(team)
 	return SSticker.mode.get_nuke_team()
 
-/datum/antagonist/nuclear_operatives/get_team()
+/datum/antagonist/nuclear_operative/get_team()
 	return SSticker.mode.nuke_team
 
 /// Used for equipping nuclear operatives
-/datum/antagonist/nuclear_operatives/proc/equip_operatives(/mob/living/carbon/human/operative, uplink_uses = 100)
+/datum/antagonist/nuclear_operative/proc/equip_operatives(/mob/living/carbon/human/operative, uplink_uses = 100)
 	var/radio_freq = SYND_FREQ
 
 	var/obj/item/radio/R = new /obj/item/radio/headset/syndicate/alt(synd_mob)
@@ -107,7 +104,7 @@ RESTRICT_TYPE(/datum/antagonist/nuclear_operatives)
 	return TRUE
 
 // TODO: finish renaming all instances of create_syndicate to create_operative
-/datum/antagonist/nuclear_operatives/proc/create_operative(datum/mind/operative, obj/machinery/nuclearbomb/syndicate/the_bomb)
+/datum/antagonist/nuclear_operative/proc/create_operative(datum/mind/operative, obj/machinery/nuclearbomb/syndicate/the_bomb)
 	var/mob/living/carbon/human/M = operative.current
 
 	M.set_species(/datum/species/human, TRUE)
@@ -142,7 +139,7 @@ RESTRICT_TYPE(/datum/antagonist/nuclear_operatives)
 		to_chat(operative.current, "The code for \the [the_bomb.name] is: <b>[the_bomb.r_code]</b>")
 
 // TODO: make sure all instances of prepare_syndicate_leader are changed to prepare_leader
-/datum/antagonist/nuclear_operatives/proc/prepare_leader(datum/mind/operative, obj/machinery/nuclearbomb/syndicate/the_bomb)
+/datum/antagonist/nuclear_operative/proc/prepare_leader(datum/mind/operative, obj/machinery/nuclearbomb/syndicate/the_bomb)
 	var/leader_title = pick("Czar", "Boss", "Commander", "Chief", "Kingpin", "Director", "Overlord")
 	operative.current.real_name = "[syndicate_name()] Team [leader_title]"
 	to_chat(operative.current, "<b>You are the Syndicate leader for this mission. You are responsible for the distribution of telecrystals and your ID is the only one who can open the launch bay doors.</b>")
@@ -171,34 +168,8 @@ RESTRICT_TYPE(/datum/antagonist/nuclear_operatives)
 			H.update_icons()
 
 
-// TODO: set for use in this datum - originally part of gamemode post setup
-// TODO: Possibly move this to team datum
-/datum/antagonist/nuclear_operatives/proc/scale_telecrystals()
-	var/list/living_crew = get_living_players(exclude_nonhuman = FALSE, exclude_offstation = TRUE)
-	var/danger = length(living_crew)
-	while(!ISMULTIPLE(++danger, 10)) //Increments danger up to the nearest multiple of ten
-
-	total_tc += danger * NUKESCALINGMODIFIER // TODO: reimplement define
-
-// TODO: set for use in this datum - originally part of gamemode post setup
-// TODO: Possibly move this to team datum
-/datum/antagonist/nuclear_operatives/proc/share_telecrystals()
-	var/player_tc
-	var/remainder
-
-	player_tc = round(total_tc / length(GLOB.nuclear_uplink_list)) //round to get an integer and not floating point
-	remainder = total_tc % length(GLOB.nuclear_uplink_list)
-
-	for(var/obj/item/radio/uplink/nuclear/U in GLOB.nuclear_uplink_list)
-		U.hidden_uplink.uses += player_tc
-	while(remainder > 0)
-		for(var/obj/item/radio/uplink/nuclear/U in GLOB.nuclear_uplink_list)
-			if(remainder <= 0)
-				break
-			U.hidden_uplink.uses++
-			remainder--
-
-/datum/game_mode/proc/update_syndicate_id(datum/mind/operative, is_leader = FALSE)
+// TODO: double check that the proc name was changed from update_syndicate_id where used
+/datum/antagonist/nuclear_operative/proc/update_operative_id(datum/mind/operative, is_leader = FALSE)
 	var/list/found_ids = operative.current.search_contents_for(/obj/item/card/id)
 
 	if(length(found_ids))

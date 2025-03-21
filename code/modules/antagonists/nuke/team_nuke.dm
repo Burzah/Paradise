@@ -1,6 +1,6 @@
 /datum/team/nuke
 	name = "Nuclear Operatives"
-	antag_datum_type = /datum/antagonist/nuclear_operatives
+	antag_datum_type = /datum/antagonist/nuclear_operative
 
 	var/syndicate_name
 	var/obj/machinery/nuclearbomb/tracked_nuke
@@ -12,7 +12,7 @@
 	objective_holder.add_objective(/datum/objective/nuclear)
 
 	for(var/datum/mind/M as anything in operatives)
-		var/datum/antagonist/nuclear_operatives/operative = M.has_antag_datum(datum/antagonist/nuclear_operatives)
+		var/datum/antagonist/nuclear_operative/operative = M.has_antag_datum(datum/antagonist/nuclear_operative)
 		operative.equip_operatives()
 
 /datum/team/nuke/can_create_team()
@@ -65,3 +65,29 @@
 			remove_member(M)
 
 	return operatives + cyborgs
+
+// TODO: set for use in this datum - originally part of gamemode post setup
+/datum/antagonist/nuclear_operative/proc/scale_telecrystals()
+	var/list/living_crew = get_living_players(exclude_nonhuman = FALSE, exclude_offstation = TRUE)
+	var/danger = length(living_crew)
+	while(!ISMULTIPLE(++danger, 10)) //Increments danger up to the nearest multiple of ten
+
+	total_tc += danger * NUKESCALINGMODIFIER // TODO: reimplement define
+
+// TODO: set for use in this datum - originally part of gamemode post setup
+/datum/antagonist/nuclear_operative/proc/share_telecrystals()
+	var/player_tc
+	var/remainder
+
+	player_tc = round(total_tc / length(GLOB.nuclear_uplink_list)) //round to get an integer and not floating point
+	remainder = total_tc % length(GLOB.nuclear_uplink_list)
+
+	for(var/obj/item/radio/uplink/nuclear/U in GLOB.nuclear_uplink_list)
+		U.hidden_uplink.uses += player_tc
+	while(remainder > 0)
+		for(var/obj/item/radio/uplink/nuclear/U in GLOB.nuclear_uplink_list)
+			if(remainder <= 0)
+				break
+			U.hidden_uplink.uses++
+			remainder--
+
