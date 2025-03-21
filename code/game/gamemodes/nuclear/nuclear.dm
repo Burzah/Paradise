@@ -65,19 +65,8 @@
 	..()
 	return 1
 
-// /datum/game_mode/proc/remove_operative(datum/mind/operative_mind)
-// 	if(operative_mind in syndicates)
-// 		SSticker.mode.syndicates -= operative_mind
-// 		operative_mind.special_role = null
-// 		operative_mind.objective_holder.clear(/datum/objective/nuclear)
-// 		operative_mind.current.create_attack_log("<span class='danger'>No longer nuclear operative</span>")
-// 		operative_mind.current.create_log(CONVERSION_LOG, "No longer nuclear operative")
-// 		if(issilicon(operative_mind.current))
-// 			to_chat(operative_mind.current, "<span class='userdanger'>You have been turned into a robot! You are no longer a Syndicate operative.</span>")
-// 		else
-// 			to_chat(operative_mind.current, "<span class='userdanger'>You have been brainwashed! You are no longer a Syndicate operative.</span>")
-// 		SSticker.mode.update_synd_icons_removed(operative_mind)
-
+// TODO: look over what can be moved to antag datum and team datum before deleting
+// TODO: setup similar to cult gamemode when finished with above
 /datum/game_mode/nuclear/post_setup()
 	new /datum/team/nuke
 
@@ -123,111 +112,11 @@
 	// 	spawnpos++
 	// 	// update_synd_icons_added(synd_mind)
 
-	// scale_telecrystals()
-	// share_telecrystals()
+	// scale_telecrystals() // TODO: moved out of post setup to datum
+	// share_telecrystals() // TODO: moved out of post setup to datum
 
 	// return ..()
 
-/datum/game_mode/nuclear/proc/scale_telecrystals()
-	var/list/living_crew = get_living_players(exclude_nonhuman = FALSE, exclude_offstation = TRUE)
-	var/danger = length(living_crew)
-	while(!ISMULTIPLE(++danger, 10)) //Increments danger up to the nearest multiple of ten
-
-	total_tc += danger * NUKESCALINGMODIFIER
-
-/datum/game_mode/nuclear/proc/share_telecrystals()
-	var/player_tc
-	var/remainder
-
-	player_tc = round(total_tc / length(GLOB.nuclear_uplink_list)) //round to get an integer and not floating point
-	remainder = total_tc % length(GLOB.nuclear_uplink_list)
-
-	for(var/obj/item/radio/uplink/nuclear/U in GLOB.nuclear_uplink_list)
-		U.hidden_uplink.uses += player_tc
-	while(remainder > 0)
-		for(var/obj/item/radio/uplink/nuclear/U in GLOB.nuclear_uplink_list)
-			if(remainder <= 0)
-				break
-			U.hidden_uplink.uses++
-			remainder--
-
-/datum/game_mode/proc/create_syndicate(datum/mind/synd_mind, obj/machinery/nuclearbomb/syndicate/the_bomb) // So we don't have inferior species as ops - randomize a human
-	var/mob/living/carbon/human/M = synd_mind.current
-
-	M.set_species(/datum/species/human, TRUE)
-	M.dna.flavor_text = null
-	M.flavor_text = null
-	M.dna.ready_dna(M) // Quadriplegic Nuke Ops won't be participating in the paralympics
-	M.dna.species.create_organs(M)
-	M.cleanSE() //No fat/blind/colourblind/epileptic/whatever ops.
-	M.overeatduration = 0
-
-	var/obj/item/organ/external/head/head_organ = M.get_organ("head")
-	var/hair_c = pick("#8B4513","#000000","#FF4500","#FFD700") // Brown, black, red, blonde
-	var/eye_c = pick("#000000","#8B4513","1E90FF") // Black, brown, blue
-	var/skin_tone = pick(-50, -30, -10, 0, 0, 0, 10) // Caucasian/black
-	head_organ.facial_colour = hair_c
-	head_organ.sec_facial_colour = hair_c
-	head_organ.hair_colour = hair_c
-	head_organ.sec_hair_colour = hair_c
-	M.change_eye_color(eye_c)
-	M.s_tone = skin_tone
-	head_organ.h_style = random_hair_style(M.gender, head_organ.dna.species.name)
-	head_organ.f_style = random_facial_hair_style(M.gender, head_organ.dna.species.name)
-	M.body_accessory = null
-	M.regenerate_icons()
-	M.update_body()
-
-	if(!the_bomb)
-		the_bomb = locate(/obj/machinery/nuclearbomb/syndicate) in GLOB.poi_list
-
-	if(the_bomb)
-		synd_mind.store_memory("<B>Syndicate [the_bomb.name] Code</B>: [the_bomb.r_code]")
-		to_chat(synd_mind.current, "The code for \the [the_bomb.name] is: <B>[the_bomb.r_code]</B>")
-
-/datum/game_mode/proc/prepare_syndicate_leader(datum/mind/synd_mind, obj/machinery/nuclearbomb/syndicate/the_bomb)
-	var/leader_title = pick("Czar", "Boss", "Commander", "Chief", "Kingpin", "Director", "Overlord")
-	synd_mind.current.real_name = "[syndicate_name()] Team [leader_title]"
-	to_chat(synd_mind.current, "<B>You are the Syndicate leader for this mission. You are responsible for the distribution of telecrystals and your ID is the only one who can open the launch bay doors.</B>")
-	to_chat(synd_mind.current, "<B>If you feel you are not up to this task, give your ID to another operative.</B>")
-	to_chat(synd_mind.current, "<B>In your hand you will find a special item capable of triggering a greater challenge for your team. Examine it carefully and consult with your fellow operatives before activating it.</B>")
-
-	var/obj/item/nuclear_challenge/challenge = new /obj/item/nuclear_challenge
-	synd_mind.current.equip_to_slot_or_del(challenge, ITEM_SLOT_RIGHT_HAND)
-
-	update_syndicate_id(synd_mind, leader_title, TRUE)
-
-	if(the_bomb)
-		var/obj/item/paper/P = new
-		P.info = "The code for \the [the_bomb.name] is: <B>[the_bomb.r_code]</B>"
-		P.name = "nuclear bomb code"
-		var/obj/item/stamp/syndicate/stamp = new
-		P.stamp(stamp)
-		qdel(stamp)
-
-		if(SSticker.mode.config_tag=="nuclear")
-			P.loc = synd_mind.current.loc
-		else
-			var/mob/living/carbon/human/H = synd_mind.current
-			P.loc = H.loc
-			H.equip_to_slot_or_del(P, ITEM_SLOT_RIGHT_POCKET, 0)
-			H.update_icons()
-
-
-/datum/game_mode/proc/update_syndicate_id(datum/mind/synd_mind, is_leader = FALSE)
-	var/list/found_ids = synd_mind.current.search_contents_for(/obj/item/card/id)
-
-	if(LAZYLEN(found_ids))
-		for(var/obj/item/card/id/ID in found_ids)
-			ID.name = "[synd_mind.current.real_name] ID card"
-			ID.registered_name = synd_mind.current.real_name
-			if(is_leader)
-				ID.access += ACCESS_SYNDICATE_LEADER
-	else
-		message_admins("Warning: Operative [key_name_admin(synd_mind.current)] spawned without an ID card!")
-
-/datum/game_mode/proc/forge_syndicate_objectives(datum/mind/syndicate)
-	syndicate.add_mind_objective(/datum/objective/nuclear)
 
 /datum/game_mode/proc/greet_syndicate(datum/mind/syndicate, you_are=1)
 	SEND_SOUND(syndicate.current, sound('sound/ambience/antag/ops.ogg'))
@@ -243,67 +132,6 @@
 
 /datum/game_mode/proc/random_radio_frequency()
 	return 1337 // WHY??? -- Doohl
-
-
-// /datum/game_mode/proc/equip_syndicate(mob/living/carbon/human/synd_mob, uplink_uses = 100)
-	// var/radio_freq = SYND_FREQ
-
-	// var/obj/item/radio/R = new /obj/item/radio/headset/syndicate/alt(synd_mob)
-	// R.set_frequency(radio_freq)
-	// synd_mob.equip_to_slot_or_del(R, ITEM_SLOT_LEFT_EAR)
-
-	// var/back
-
-	// switch(synd_mob.backbag)
-	// 	if(GBACKPACK, DBACKPACK)
-	// 		back = /obj/item/storage/backpack
-	// 	if(GSATCHEL, DSATCHEL)
-	// 		back = /obj/item/storage/backpack/satchel_norm
-	// 	if(GDUFFLEBAG, DDUFFLEBAG)
-	// 		back = /obj/item/storage/backpack/duffel
-	// 	if(LSATCHEL)
-	// 		back = /obj/item/storage/backpack/satchel
-	// 	else
-	// 		back = /obj/item/storage/backpack
-
-	// synd_mob.equip_to_slot_or_del(new /obj/item/clothing/under/syndicate(synd_mob), ITEM_SLOT_JUMPSUIT)
-	// synd_mob.equip_to_slot_or_del(new /obj/item/clothing/shoes/combat(synd_mob), ITEM_SLOT_SHOES)
-	// synd_mob.equip_or_collect(new /obj/item/clothing/gloves/combat(synd_mob), ITEM_SLOT_GLOVES)
-	// synd_mob.equip_to_slot_or_del(new /obj/item/card/id/syndicate(synd_mob), ITEM_SLOT_ID)
-	// synd_mob.equip_to_slot_or_del(new back(synd_mob), ITEM_SLOT_BACK)
-	// synd_mob.equip_to_slot_or_del(new /obj/item/gun/projectile/automatic/pistol(synd_mob), ITEM_SLOT_BELT)
-	// synd_mob.equip_to_slot_or_del(new /obj/item/storage/box/survival_syndi(synd_mob.back), ITEM_SLOT_IN_BACKPACK)
-	// synd_mob.equip_to_slot_or_del(new /obj/item/pinpointer/nukeop(synd_mob), ITEM_SLOT_PDA)
-	// var/obj/item/radio/uplink/nuclear/U = new /obj/item/radio/uplink/nuclear(synd_mob)
-	// U.hidden_uplink.uplink_owner="[synd_mob.key]"
-	// U.hidden_uplink.uses = uplink_uses
-	// synd_mob.equip_to_slot_or_del(U, ITEM_SLOT_IN_BACKPACK)
-	// synd_mob.mind.offstation_role = TRUE
-
-	// if(synd_mob.dna.species)
-	// 	var/race = synd_mob.dna.species.name
-
-	// 	switch(race)
-	// 		if("Vox")
-	// 			synd_mob.equip_to_slot_or_del(new /obj/item/clothing/mask/gas/syndicate(synd_mob), ITEM_SLOT_MASK)
-	// 			synd_mob.equip_to_slot_or_del(new /obj/item/tank/internals/emergency_oxygen/double/vox(synd_mob), ITEM_SLOT_LEFT_HAND)
-	// 			synd_mob.internal = synd_mob.l_hand
-	// 			synd_mob.update_action_buttons_icon()
-
-	// 		if("Plasmaman")
-	// 			synd_mob.equip_to_slot_or_del(new /obj/item/clothing/mask/gas/syndicate(synd_mob), ITEM_SLOT_MASK)
-	// 			synd_mob.equip_or_collect(new /obj/item/tank/internals/plasmaman(synd_mob), ITEM_SLOT_SUIT_STORE)
-	// 			synd_mob.equip_or_collect(new /obj/item/extinguisher_refill(synd_mob), ITEM_SLOT_IN_BACKPACK)
-	// 			synd_mob.equip_or_collect(new /obj/item/extinguisher_refill(synd_mob), ITEM_SLOT_IN_BACKPACK)
-	// 			synd_mob.internal = synd_mob.get_item_by_slot(ITEM_SLOT_SUIT_STORE)
-	// 			synd_mob.update_action_buttons_icon()
-
-	// synd_mob.rejuvenate() //fix any damage taken by naked vox/plasmamen/etc while round setups
-	// var/obj/item/bio_chip/explosive/E = new/obj/item/bio_chip/explosive(synd_mob)
-	// E.implant(synd_mob)
-	// synd_mob.faction |= "syndicate"
-	// synd_mob.update_icons()
-	// return 1
 
 
 /datum/game_mode/proc/is_operatives_are_dead()

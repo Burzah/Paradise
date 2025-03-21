@@ -85,7 +85,8 @@
 	var/list/datum/team/abductor/actual_abductor_teams = list()
 
 	/// A list of all the nuclear operatives' minds
-	var/list/datum/mind/syndicates = list()
+	// TODO: rename syndicates to operatives in other places
+	var/list/datum/mind/operatives = list()
 	/// The Nuclear Operative team datum
 	var/datum/team/nuke/nuke_team
 

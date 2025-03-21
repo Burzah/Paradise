@@ -7,11 +7,38 @@
 	var/core_objective = /datum/objective/nuclear
 
 
-/datum/team/nuke/create_team()
+/datum/team/nuke/create_team(list/operatives)
+	. = ..()
+	objective_holder.add_objective(/datum/objective/nuclear)
 
-/datum/team/nuke/proc/study_objectives(mob/living/M)
-	if(!M)
-		return
+	for(var/datum/mind/M as anything in operatives)
+		var/datum/antagonist/nuclear_operatives/operative = M.has_antag_datum(datum/antagonist/nuclear_operatives)
+		operative.equip_operatives()
+
+/datum/team/nuke/can_create_team()
+	return isnull(SSticker.mode.nuke_team)
+
+/datum/team/nuke/assign_team()
+	SSticker.mode.nuke_team = src
+
+/datum/team/nuke/clear_team_reference()
+	if(SSticker.mode.nuke_team == src)
+		SSticker.mode.nuke_team = null
+	else
+		CRASH("[src] ([type]) attempted to clear a team reference that wasn't itself!")
+
+// TODO: Figure out how to use this properly vs. declare_completion in game mode
+/datum/team/nuke/on_round_end()
+	var/list/end_text = list()
+	end_text += "<br><b>Nuclear Operatives' objectives:</b>"
+	for(var/datum/objective/obj in objective_holder.get_objectives())
+		end_text += "<br>[obj.explanation_text] - "
+		if(!obj.check_completion())
+			end_text += "<font color='red'>Fail.</font>"
+		else
+			end_text += "<font color='green'><b>Success!</b></font>"
+	to_chat(world, end_text.Join(""))
+
 
 /datum/team/nuke/proc/get_operatives()
 	var/operatives = 0
