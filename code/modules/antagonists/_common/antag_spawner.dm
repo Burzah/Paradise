@@ -67,6 +67,7 @@
 		to_chat(user, "<span class='warning'>Unable to connect to Syndicate command. Please wait and try again later or use the teleporter on your uplink to get your points refunded.</span>")
 
 // TODO: Fix this, most things have been moved onto the datum or have not been implemented
+// TODO: Possibly move this to Datum
 /obj/item/antag_spawner/nuke_ops/spawn_antag(client/C, turf/T, kind, datum/mind/user)
 	var/mob/living/carbon/human/M = new/mob/living/carbon/human(T)
 
@@ -78,6 +79,8 @@
 	SSticker.mode.equip_syndicate(M, 0)
 	SSticker.mode.update_syndicate_id(M.mind, FALSE)
 
+// TODO: Fix this, most things have been moved onto the datum or have not been implemented
+// TODO: Possibly move this to Datum
 /obj/item/antag_spawner/nuke_ops/proc/set_operative_values(client/C, mob/living/M)
 	M.key = C.key
 
