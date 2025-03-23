@@ -8,7 +8,7 @@
 
 	var/nuke_scaling_modifier = 6
 	/// Total amount of telecrystals shared between nuke ops
-	var/total_tc
+	var/total_tc = 0
 
 /datum/team/nuke/create_team(list/operatives)
 	. = ..()
@@ -30,7 +30,6 @@
 	else
 		CRASH("[src] ([type]) attempted to clear a team reference that wasn't itself!")
 
-// TODO: Figure out how to use this properly vs. declare_completion in game mode
 /datum/team/nuke/on_round_end()
 	var/list/end_text = list()
 	end_text += "<br><b>Nuclear Operatives' objectives:</b>"
@@ -42,13 +41,12 @@
 			end_text += "<font color='green'><b>Success!</b></font>"
 	to_chat(world, end_text.Join(""))
 
-
 /datum/team/nuke/proc/get_operatives()
 	var/operatives = 0
 	var/cyborgs = 0
 	var/list/minds_to_remove = list()
 
-	for(var/datum/mind/M as anything in member)
+	for(var/datum/mind/M as anything in members)
 		if(isnull(M))
 			stack_trace("Found a null mind in /datum/team/nuke's members. Removing...")
 			minds_to_remove |= M
@@ -70,7 +68,7 @@
 	return operatives + cyborgs
 
 // TODO: set for use in this datum - originally part of gamemode post setup
-/datum/antagonist/nuclear_operative/proc/scale_telecrystals()
+/datum/team/nuke/proc/scale_telecrystals()
 	var/list/living_crew = get_living_players(exclude_nonhuman = FALSE, exclude_offstation = TRUE)
 	var/danger = length(living_crew)
 	while(!ISMULTIPLE(++danger, 10)) //Increments danger up to the nearest multiple of ten
@@ -78,7 +76,7 @@
 	total_tc += danger * nuke_scaling_modifier
 
 // TODO: set for use in this datum - originally part of gamemode post setup
-/datum/antagonist/nuclear_operative/proc/share_telecrystals()
+/datum/team/nuke/proc/share_telecrystals()
 	var/player_tc
 	var/remainder
 
