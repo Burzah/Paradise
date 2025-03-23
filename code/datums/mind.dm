@@ -164,7 +164,7 @@
 	SEND_SIGNAL(new_character, COMSIG_BODY_TRANSFER_TO)
 	if(ishuman(new_character))
 		var/mob/living/carbon/human/H = new_character
-		if(H.mind in SSticker.mode.syndicates)
+		if(H.mind in SSticker.mode.operatives)
 			SSticker.mode.update_synd_icons_added(H.mind)
 
 /datum/mind/proc/store_memory(new_text)
@@ -514,7 +514,7 @@
 /datum/mind/proc/memory_edit_uplink()
 	. = ""
 	if(ishuman(current) && ((has_antag_datum(/datum/antagonist/traitor)) || \
-		(src in SSticker.mode.syndicates)))
+		(src in SSticker.mode.operatives)))
 		. = "Uplink: <a href='byond://?src=[UID()];common=uplink'>give</a>"
 		var/obj/item/uplink/hidden/suplink = find_syndicate_uplink()
 		var/crystals
@@ -1657,36 +1657,12 @@
 	if(!has_antag_datum(/datum/antagonist/traitor))
 		add_antag_datum(/datum/antagonist/traitor)
 
-/datum/mind/proc/make_Nuke()
-	if(!(src in SSticker.mode.syndicates))
-		SSticker.mode.syndicates += src
-		SSticker.mode.update_synd_icons_added(src)
-		if(length(SSticker.mode.syndicates) == 1)
-			SSticker.mode.prepare_syndicate_leader(src)
-		else
-			current.real_name = "[syndicate_name()] Operative #[length(SSticker.mode.syndicates) - 1]"
-		special_role = SPECIAL_ROLE_NUKEOPS
-		assigned_role = SPECIAL_ROLE_NUKEOPS
-		to_chat(current, "<span class='notice'>You are a [syndicate_name()] agent!</span>")
-		SSticker.mode.forge_syndicate_objectives(src)
-		SSticker.mode.greet_syndicate(src, FALSE) // False to fix the agent message appearing twice
+// TODO: Changed from make_Nuke() - does not seem to be implemented anywhere
+/datum/mind/proc/make_operative()
+	if(!has_antag_datum(/datum/antagonist/nuclear_operative))
+		add_antag_datum(/datum/antagonist/nuclear_operative)
+		SSticker.mode.operatives |= src
 
-		current.loc = get_turf(locate("landmark*Syndicate-Spawn"))
-
-		var/mob/living/carbon/human/H = current
-		qdel(H.belt)
-		qdel(H.back)
-		qdel(H.l_ear)
-		qdel(H.r_ear)
-		qdel(H.gloves)
-		qdel(H.head)
-		qdel(H.shoes)
-		qdel(H.wear_id)
-		qdel(H.wear_pda)
-		qdel(H.wear_suit)
-		qdel(H.w_uniform)
-
-		SSticker.mode.equip_syndicate(current)
 
 /datum/mind/proc/make_vampire()
 	if(!has_antag_datum(/datum/antagonist/vampire))

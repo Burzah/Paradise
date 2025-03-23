@@ -6,7 +6,7 @@
 	return nuke_team
 
 /proc/issyndicate(mob/living/M as mob)
-	return istype(M) && M.mind && SSticker && SSticker.mode && (M.mind in SSticker.mode.syndicates)
+	return istype(M) && M.mind && SSticker && SSticker.mode && (M.mind in SSticker.mode.operatives)
 
 /datum/game_mode/nuclear
 	name = "nuclear emergency"
@@ -18,7 +18,9 @@
 	recommended_enemies = 5
 	single_antag_positions = list()
 
-	var/const/agents_possible = 5 //If we ever need more syndicate agents.
+
+	// Numver of operatives possible
+	var/const/operatives_possible = 5
 
 	var/nukes_left = 1
 	/// Used for tracking if the syndies actually haul the nuke to the station
@@ -37,25 +39,25 @@
 	if(!..())
 		return 0
 
-	var/list/possible_syndicates = get_players_for_role(ROLE_OPERATIVE)
+	var/list/possible_operatives = get_players_for_role(ROLE_OPERATIVE)
 	var/agent_number = 0
 
-	if(length(possible_syndicates) < 1)
+	if(length(possible_operatives) < 1)
 		return 0
 
-	if(LAZYLEN(possible_syndicates) > agents_possible)
-		agent_number = agents_possible
+	if(LAZYLEN(possible_operatives) > operatives_possible)
+		agent_number = operatives_possible
 	else
-		agent_number = length(possible_syndicates)
+		agent_number = length(possible_operatives)
 
 	var/n_players = num_players()
 	if(agent_number > n_players)
 		agent_number = n_players/2
 
 	while(agent_number > 0)
-		var/datum/mind/new_syndicate = pick(possible_syndicates)
-		syndicates += new_syndicate
-		possible_syndicates -= new_syndicate //So it doesn't pick the same guy each time.
+		var/datum/mind/new_operative = pick(possible_operatives)
+		operatives += new_operative
+		possible_operatives -= new_operative //So it doesn't pick the same guy each time.
 		agent_number--
 
 	return 1
@@ -135,7 +137,7 @@
 
 
 /datum/game_mode/proc/is_operatives_are_dead()
-	for(var/datum/mind/operative_mind in syndicates)
+	for(var/datum/mind/operative_mind in operatives)
 		if(!ishuman(operative_mind.current))
 			if(operative_mind.current)
 				if(operative_mind.current.stat!=2)
@@ -207,13 +209,13 @@
 
 
 /datum/game_mode/proc/auto_declare_completion_nuclear()
-	if(length(syndicates) || GAMEMODE_IS_NUCLEAR)
+	if(length(operatives) || GAMEMODE_IS_NUCLEAR)
 		var/list/text = list("<br><FONT size=3><B>The syndicate operatives were:</B></FONT>")
 
 		var/purchases = ""
 		var/TC_uses = 0
 
-		for(var/datum/mind/syndicate in syndicates)
+		for(var/datum/mind/syndicate in operatives)
 
 			text += "<br><b>[syndicate.get_display_key()]</b> was <b>[syndicate.name]</b> ("
 			if(syndicate.current)
@@ -259,7 +261,7 @@
 	var/datum/scoreboard/scoreboard = SSticker.score
 	var/foecount = 0
 
-	for(var/datum/mind/M in SSticker.mode.syndicates)
+	for(var/datum/mind/M in SSticker.mode.operatives)
 		foecount++
 		if(!M || !M.current)
 			scoreboard.score_ops_killed++
@@ -315,7 +317,7 @@
 	var/diskdat = ""
 	var/bombdat = null
 
-	for(var/datum/mind/M in SSticker.mode.syndicates)
+	for(var/datum/mind/M in SSticker.mode.operatives)
 		foecount++
 
 	for(var/mob in GLOB.mob_living_list)

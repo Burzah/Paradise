@@ -32,7 +32,7 @@
 	if(used)
 		to_chat(user, "<span class='warning'>[src] is out of power!</span>")
 		return FALSE
-	if(!(user.mind in SSticker.mode.syndicates))
+	if(!(user.mind in SSticker.mode.operatives))
 		to_chat(user, "<span class='danger'>AUTHENTICATION FAILURE. ACCESS DENIED.</span>")
 		return FALSE
 	if(checking)
@@ -138,7 +138,7 @@
 	return TRUE
 
 /obj/item/antag_spawner/nuke_ops/borg_tele/spawn_antag(client/C, turf/T, datum/mind/user)
-	if(!(user in SSticker.mode.syndicates))
+	if(!(user in SSticker.mode.operatives))
 		used = FALSE
 		return
 

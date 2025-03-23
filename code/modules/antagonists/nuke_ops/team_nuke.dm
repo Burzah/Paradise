@@ -12,7 +12,7 @@
 	objective_holder.add_objective(/datum/objective/nuclear)
 
 	for(var/datum/mind/M as anything in operatives)
-		var/datum/antagonist/nuclear_operative/operative = M.has_antag_datum(datum/antagonist/nuclear_operative)
+		var/datum/antagonist/nuclear_operative/operative = M.has_antag_datum(/datum/antagonist/nuclear_operative)
 		operative.equip_operatives()
 
 /datum/team/nuke/can_create_team()

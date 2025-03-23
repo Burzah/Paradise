@@ -14,7 +14,7 @@ RESTRICT_TYPE(/datum/antagonist/nuclear_operative)
 	..()
 	owner.current.faction |= "operative"
 	owner.current.create_log(CONVERSION_LOG, "Joined as Nuclear Operative")
-	SEND_SOUND(owner.current, sounds('sound/ambience/antag/ops.ogg'))
+	SEND_SOUND(owner.current, sound('sound/ambience/antag/ops.ogg'))
 
 /datum/antagonist/nuclear_operative/detach_from_owner()
 	if(!owner.current)
@@ -22,13 +22,11 @@ RESTRICT_TYPE(/datum/antagonist/nuclear_operative)
 	owner.current.faction -= "operative"
 	owner.current.create_log(CONVERSION_LOG, "Removed from Nuclear Operatives")
 
-// TODO: change syndicates in gamemode code to operative for clarity
 /datum/antagonist/nuclear_operative/add_owner_to_gamemode()
-	SSticker.mode.syndicates |= owner
+	SSticker.mode.operatives |= owner
 
-// TODO: change syndicates in gamemode code to operative for clarity
 /datum/antagonist/nuclear_operative/remove_owner_from_gamemode()
-	SSticker.mode.syndicates -= owner
+	SSticker.mode.operatives -= owner
 
 // TODO: Figure out greeting (might not need this?)
 /datum/antagonist/nuclear_operative/greet()
@@ -48,7 +46,7 @@ RESTRICT_TYPE(/datum/antagonist/nuclear_operative)
 /datum/antagonist/nuclear_operative/proc/equip_operatives(/mob/living/carbon/human/operative, uplink_uses = 100)
 	var/radio_freq = SYND_FREQ
 
-	var/obj/item/radio/R = new /obj/item/radio/headset/syndicate/alt(synd_mob)
+	var/obj/item/radio/R = new /obj/item/radio/headset/syndicate/alt(operative)
 	R.set_frequency(radio_freq)
 	operative.equip_to_slot_or_del(R, ITEM_SLOT_LEFT_EAR)
 
@@ -66,22 +64,22 @@ RESTRICT_TYPE(/datum/antagonist/nuclear_operative)
 		else
 			back = /obj/item/storage/backpack
 
-	operative.equip_to_slot_or_del(new /obj/item/clothing/under/syndicate(synd_mob), ITEM_SLOT_JUMPSUIT)
-	operative.equip_to_slot_or_del(new /obj/item/clothing/shoes/combat(synd_mob), ITEM_SLOT_SHOES)
-	operative.equip_or_collect(new /obj/item/clothing/gloves/combat(synd_mob), ITEM_SLOT_GLOVES)
-	operative.equip_to_slot_or_del(new /obj/item/card/id/syndicate(synd_mob), ITEM_SLOT_ID)
-	operative.equip_to_slot_or_del(new back(synd_mob), ITEM_SLOT_BACK)
-	operative.equip_to_slot_or_del(new /obj/item/gun/projectile/automatic/pistol(synd_mob), ITEM_SLOT_BELT)
-	operative.equip_to_slot_or_del(new /obj/item/storage/box/survival_syndi(synd_mob.back), ITEM_SLOT_IN_BACKPACK)
-	operative.equip_to_slot_or_del(new /obj/item/pinpointer/nukeop(synd_mob), ITEM_SLOT_PDA)
-	var/obj/item/radio/uplink/nuclear/U = new /obj/item/radio/uplink/nuclear(synd_mob)
-	U.hidden_uplink.uplink_owner="[synd_mob.key]"
+	operative.equip_to_slot_or_del(new /obj/item/clothing/under/syndicate(operative), ITEM_SLOT_JUMPSUIT)
+	operative.equip_to_slot_or_del(new /obj/item/clothing/shoes/combat(operative), ITEM_SLOT_SHOES)
+	operative.equip_or_collect(new /obj/item/clothing/gloves/combat(operative), ITEM_SLOT_GLOVES)
+	operative.equip_to_slot_or_del(new /obj/item/card/id/syndicate(operative), ITEM_SLOT_ID)
+	operative.equip_to_slot_or_del(new back(operative), ITEM_SLOT_BACK)
+	operative.equip_to_slot_or_del(new /obj/item/gun/projectile/automatic/pistol(operative), ITEM_SLOT_BELT)
+	operative.equip_to_slot_or_del(new /obj/item/storage/box/survival_syndi(operative.back), ITEM_SLOT_IN_BACKPACK)
+	operative.equip_to_slot_or_del(new /obj/item/pinpointer/nukeop(operative), ITEM_SLOT_PDA)
+	var/obj/item/radio/uplink/nuclear/U = new /obj/item/radio/uplink/nuclear(operative)
+	U.hidden_uplink.uplink_owner="[operative.key]"
 	U.hidden_uplink.uses = uplink_uses
 	operative.equip_to_slot_or_del(U, ITEM_SLOT_IN_BACKPACK)
 	operative.mind.offstation_role = TRUE
 
 	if(operative.dna.species)
-		var/race = synd_mob.dna.species.name
+		var/race = operative.dna.species.name
 
 		switch(race)
 			if("Vox")
@@ -95,7 +93,7 @@ RESTRICT_TYPE(/datum/antagonist/nuclear_operative)
 				operative.equip_or_collect(new /obj/item/tank/internals/plasmaman(operative), ITEM_SLOT_SUIT_STORE)
 				operative.equip_or_collect(new /obj/item/extinguisher_refill(operative), ITEM_SLOT_IN_BACKPACK)
 				operative.equip_or_collect(new /obj/item/extinguisher_refill(operative), ITEM_SLOT_IN_BACKPACK)
-				operative.internal = synd_mob.get_item_by_slot(ITEM_SLOT_SUIT_STORE)
+				operative.internal = operative.get_item_by_slot(ITEM_SLOT_SUIT_STORE)
 				operative.update_action_buttons_icon()
 
 	operative.rejuvenate()
@@ -149,7 +147,7 @@ RESTRICT_TYPE(/datum/antagonist/nuclear_operative)
 	var/obj/item/nuclear_challenge/challenge = new /obj/item/nuclear_challenge
 	operative.current.equip_to_slot_or_del(challenge, ITEM_SLOT_RIGHT_HAND)
 
-	update_syndicate_id(operative, leader_title, TRUE)
+	update_operative_id(operative, leader_title, TRUE)
 
 	if(the_bomb)
 		var/obj/item/paper/P = new
