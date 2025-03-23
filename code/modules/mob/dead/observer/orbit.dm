@@ -121,7 +121,7 @@ GLOBAL_DATUM_INIT(orbit_menu, /datum/orbit_menu, new)
 					if(SSticker && SSticker.mode)
 						other_antags += list(
 							"Blob" = (mind.special_role == SPECIAL_ROLE_BLOB),
-							"Nuclear Operative" = (mind in SSticker.mode.syndicates)
+							"Nuclear Operative" = (mind in SSticker.mode.operatives)
 						)
 
 					for(var/antag_name in other_antags)

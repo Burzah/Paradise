@@ -6,6 +6,9 @@
 	var/obj/machinery/nuclearbomb/tracked_nuke
 	var/core_objective = /datum/objective/nuclear
 
+	var/nuke_scaling_modifier = 6
+	/// Total amount of telecrystals shared between nuke ops
+	var/total_tc
 
 /datum/team/nuke/create_team(list/operatives)
 	. = ..()
@@ -72,7 +75,7 @@
 	var/danger = length(living_crew)
 	while(!ISMULTIPLE(++danger, 10)) //Increments danger up to the nearest multiple of ten
 
-	total_tc += danger * NUKESCALINGMODIFIER // TODO: reimplement define
+	total_tc += danger * nuke_scaling_modifier
 
 // TODO: set for use in this datum - originally part of gamemode post setup
 /datum/antagonist/nuclear_operative/proc/share_telecrystals()

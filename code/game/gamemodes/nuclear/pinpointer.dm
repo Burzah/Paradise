@@ -343,7 +343,7 @@
 	nearest_op = null //Resets nearest_op every time it scans
 
 	var/closest_distance = 1000
-	for(var/datum/mind/Mind in SSticker.mode.syndicates)
+	for(var/datum/mind/Mind in SSticker.mode.operatives)
 		var/mob/M = Mind.current
 		if(!ishuman(M))
 			continue

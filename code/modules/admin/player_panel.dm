@@ -373,9 +373,9 @@
 		dat += "<a href='byond://?src=[UID()];delay_round_end=1'>[SSticker.delay_end ? "End Round Normally" : "Delay Round End"]</a><br>"
 		dat += "<br><b>Antagonist Teams</b><br>"
 		dat += "<a href='byond://?src=[UID()];check_teams=1'>View Teams</a><br>"
-		if(length(SSticker.mode.syndicates))
+		if(length(SSticker.mode.operatives))
 			dat += "<br><table cellspacing=5><tr><td><B>Syndicates</B></td><td></td></tr>"
-			for(var/datum/mind/N in SSticker.mode.syndicates)
+			for(var/datum/mind/N in SSticker.mode.operatives)
 				var/mob/M = N.current
 				if(M)
 					dat += check_antagonists_line(M)

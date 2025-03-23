@@ -668,7 +668,7 @@ GLOBAL_VAR_INIT(disable_explosions, FALSE)
 		antag_list += "Revolutionary"
 	if(IS_CULTIST(M))
 		antag_list += "Cultist"
-	if(M.mind in SSticker.mode.syndicates)
+	if(M.mind in SSticker.mode.operatives)
 		antag_list += "Nuclear Operative"
 	if(iswizard(M))
 		antag_list += "Wizard"

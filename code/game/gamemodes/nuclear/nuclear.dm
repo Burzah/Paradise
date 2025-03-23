@@ -1,5 +1,3 @@
-#define NUKESCALINGMODIFIER 6
-
 /datum/game_mode/proc/get_nuke_team()
 	if(!nuke_team)
 		new /datum/team/nuke()
@@ -27,8 +25,6 @@
 	var/nuke_off_station = 0
 	/// Used for tracking if the syndies got the shuttle off of the z-level
 	var/syndies_didnt_escape = 0
-	/// Total amount of telecrystals shared between nuke ops
-	var/total_tc = 0
 
 /datum/game_mode/nuclear/announce()
 	to_chat(world, "<B>The current game mode is - Nuclear Emergency!</B>")
@@ -365,5 +361,3 @@
 	dat += "<hr>"
 
 	return dat
-
-#undef NUKESCALINGMODIFIER
