@@ -263,7 +263,7 @@ GLOBAL_VAR_INIT(record_id_num, 1001)
 	preview_icon.Blend(temp, ICON_OVERLAY)
 
 	//Tail
-	if(H.body_accessory && (istype(H.body_accessory, /datum/body_accessory/tail) || istype(H.body_accessory, /datum/body_accessory/wing)))
+	if(H.body_accessory && (istype(H.body_accessory, /datum/body_accessory/tail) || istype(H.body_accessory, /datum/body_accessory/wing) || istype(h.body_accessory, /datum/body_accessory/ears)))
 		temp = new/icon("icon" = H.body_accessory.icon, "icon_state" = H.body_accessory.icon_state)
 		preview_icon.Blend(temp, ICON_OVERLAY)
 	else if(H.tail && H.dna.species.bodyflags & HAS_TAIL)

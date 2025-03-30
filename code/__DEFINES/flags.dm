@@ -114,9 +114,10 @@
 #define BALD				(1<<15)
 #define ALL_RPARTS			(1<<16)
 #define SHAVED				(1<<17)
+#define HAS_EARS			(1<<18)
 
 //Pre-baked combinations of the above body flags
-#define HAS_BODY_ACCESSORY 	(HAS_TAIL | HAS_WING)
+#define HAS_BODY_ACCESSORY 	(HAS_TAIL | HAS_WING | HAS_EARS)
 #define HAS_MARKINGS		(HAS_HEAD_MARKINGS | HAS_BODY_MARKINGS | HAS_TAIL_MARKINGS)
 
 //Species Diet Flags

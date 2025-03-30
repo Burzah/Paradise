@@ -104,7 +104,7 @@ GLOBAL_LIST_EMPTY(body_accessory_by_species)
 	animated_icon_state = "short_a"
 	allowed_species = list("Vulpkanin", "Tajaran")
 
-//Vulpkanin
+//Vulpkanin tails
 /datum/body_accessory/tail/bushy
 	name = "Bushy Tail"
 	icon_state = "bushy"
@@ -122,6 +122,23 @@ GLOBAL_LIST_EMPTY(body_accessory_by_species)
 	icon_state = "straightbushy"
 	animated_icon_state = "straightbushy_a"
 	allowed_species = list("Vulpkanin")
+
+// Ears
+/datum/body_accessory/ears
+	icon = 'icons/mob/ears.dmi'
+	animated_icon = null
+
+// Vulpkanian ears
+/datum/body_accessory/ears/
+	name =
+	icon_state =
+	allowed_species = list()
+
+// Tajaran ears
+/datum/body_accessory/ears/
+	name =
+	icon_state =
+	allowed_species = list()
 
 //Moth wings
 /datum/body_accessory/wing
