@@ -51,6 +51,8 @@
 	/// Whether this closet uses a door overlay for when it is closed
 	var/has_closed_overlay = TRUE
 
+	VAR_PRIVATE/datum/closet_see_inside
+
 // Please dont override this unless you absolutely have to
 /obj/structure/closet/Initialize(mapload)
 	. = ..()
@@ -63,6 +65,7 @@
 		END_OF_TICK(CALLBACK(src, PROC_REF(take_contents)))
 	populate_contents() // Spawn all its stuff
 	update_icon() // Set it to the right icon if needed
+	closet_see_inside = new(src)
 
 /obj/structure/closet/update_icon()
 	. = ..()
@@ -165,6 +168,7 @@
 	if(!force)
 		dump_contents()
 	QDEL_NULL(door_obj)
+	QDEL_NULL(closet_see_inside)
 	return ..()
 
 /obj/structure/closet/CanPass(atom/movable/mover, border_dir)
