@@ -8,7 +8,7 @@
 	var/client/client
 	var/listindex
 
-/datum/progressbar/New(mob/User, goal_number, atom/target)
+/datum/progressbar/New(mob/User, goal_number, atom/target, starting_amount)
 	. = ..()
 	if(!istype(target))
 		EXCEPTION("Invalid target given")
@@ -28,6 +28,9 @@
 	bars.Add(src)
 	listindex = length(bars)
 	animate(bar, pixel_y = 32 + (PROGRESSBAR_HEIGHT * (listindex - 1)), alpha = 255, time = 5, easing = SINE_EASING)
+
+	if(starting_amount)
+		update(starting_amount)
 
 /datum/progressbar/proc/update(progress)
 	if(!user || !user.client)
